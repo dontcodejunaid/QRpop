@@ -85,6 +85,22 @@ function initNavigation() {
     });
   });
 
+  // Logo Click Navigation -> Go to Home
+  const logoLink = document.getElementById('brand-logo-link');
+  if (logoLink) {
+    const goToHome = () => {
+      document.getElementById('tab-btn-home')?.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    logoLink.addEventListener('click', goToHome);
+    logoLink.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        goToHome();
+      }
+    });
+  }
+
   // Home Quick Action Button Navigation
   const btnHomeGen = document.getElementById('btn-home-go-generate');
   const btnHomeScan = document.getElementById('btn-home-go-scan');
