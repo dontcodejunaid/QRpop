@@ -236,9 +236,9 @@ class QRScanner {
   }
 
   onScanSuccess(decodedText, decodedResult) {
+    // Immediately stop camera feed upon successful detection
     if (this.isCameraRunning) {
-      // Vibrate if mobile device supports it
-      if (navigator.vibrate) navigator.vibrate(100);
+      if (navigator.vibrate) navigator.vibrate(120);
       this.stopCamera();
     }
 
@@ -257,7 +257,12 @@ class QRScanner {
     this.displayResult(this.currentScanResult);
 
     if (window.showToast) {
-      window.showToast('QR Code scanned successfully!', 'success');
+      window.showToast('QR Code detected & camera paused!', 'success');
+    }
+
+    // Scroll to decoded result area smoothly on mobile
+    if (window.innerWidth <= 900 && this.resultCard) {
+      this.resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
 
