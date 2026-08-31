@@ -36,8 +36,11 @@
       <div class="logo-group">
         <img src="assets/logo.png" alt="QRpop Logo" class="brand-logo-img">
         <div class="logo-text">
-          <h1>QR<span>pop</span></h1>
-          <p class="tagline">Generate & Scan Instant QR Codes</p>
+          <div class="brand-title-row">
+            <h1>QR<span>pop</span></h1>
+            <span class="ai-badge"><i class="fa-solid fa-sparkles"></i> AI Powered</span>
+          </div>
+          <p class="tagline">Next-Gen Intelligent QR Generation & Vision Scanner</p>
         </div>
       </div>
       
@@ -48,8 +51,8 @@
           <span>Generate</span>
         </button>
         <button class="nav-tab" id="tab-btn-scanner" data-tab="scanner">
-          <i class="fa-solid fa-camera"></i>
-          <span>Scan</span>
+          <i class="fa-solid fa-expand"></i>
+          <span>Vision Scan</span>
         </button>
         <button class="nav-tab" id="tab-btn-history" data-tab="history">
           <i class="fa-solid fa-clock-rotate-left"></i>
@@ -62,12 +65,27 @@
   <main class="app-main">
     <!-- ==================== GENERATOR SECTION ==================== -->
     <section class="tab-content active" id="section-generator">
+      <!-- AI Magic Prompt Bar -->
+      <div class="ai-prompt-bar glass-panel">
+        <div class="ai-prompt-icon">
+          <i class="fa-solid fa-microchip-ai"></i>
+        </div>
+        <div class="ai-prompt-input-wrap">
+          <input type="text" id="ai-smart-prompt" placeholder="🤖 AI Smart Fill: e.g., 'Connect to office wifi network AcmeCorp password secret' or 'Call Alex +15551234'...">
+        </div>
+        <button class="btn btn-ai" id="btn-ai-generate">
+          <i class="fa-solid fa-bolt"></i> Auto Fill
+        </button>
+      </div>
+
       <div class="generator-container">
         <!-- Generator Form Area -->
         <div class="generator-form-card glass-panel">
           <div class="card-header">
             <h2><i class="fa-solid fa-sliders"></i> QR Type & Data</h2>
-            <span class="badge">Live Preview</span>
+            <div class="header-badges">
+              <span class="badge badge-glow"><i class="fa-solid fa-bolt"></i> Realtime Neural Engine</span>
+            </div>
           </div>
 
           <!-- Type Selector Pills -->
@@ -247,13 +265,13 @@
 
             <!-- Color Palette Presets -->
             <div class="preset-palettes">
-              <span class="preset-label">Quick Themes:</span>
+              <span class="preset-label">AI & Cyber Themes:</span>
               <button class="palette-chip active" data-fg="#0f172a" data-bg="#ffffff" style="--chip-fg:#0f172a; --chip-bg:#ffffff;" title="Classic Dark"></button>
               <button class="palette-chip" data-fg="#3b82f6" data-bg="#ffffff" style="--chip-fg:#3b82f6; --chip-bg:#ffffff;" title="Electric Blue"></button>
-              <button class="palette-chip" data-fg="#8b5cf6" data-bg="#ffffff" style="--chip-fg:#8b5cf6; --chip-bg:#ffffff;" title="Royal Purple"></button>
-              <button class="palette-chip" data-fg="#10b981" data-bg="#ffffff" style="--chip-fg:#10b981; --chip-bg:#ffffff;" title="Emerald Green"></button>
-              <button class="palette-chip" data-fg="#ec4899" data-bg="#ffffff" style="--chip-fg:#ec4899; --chip-bg:#ffffff;" title="Vibrant Pink"></button>
-              <button class="palette-chip" data-fg="#ffffff" data-bg="#0f172a" style="--chip-fg:#ffffff; --chip-bg:#0f172a;" title="Dark Mode"></button>
+              <button class="palette-chip" data-fg="#8b5cf6" data-bg="#ffffff" style="--chip-fg:#8b5cf6; --chip-bg:#ffffff;" title="Cyber Purple"></button>
+              <button class="palette-chip" data-fg="#06b6d4" data-bg="#0f172a" style="--chip-fg:#06b6d4; --chip-bg:#0f172a;" title="Neon Cyberpunk"></button>
+              <button class="palette-chip" data-fg="#10b981" data-bg="#ffffff" style="--chip-fg:#10b981; --chip-bg:#ffffff;" title="Emerald Matrix"></button>
+              <button class="palette-chip" data-fg="#f43f5e" data-bg="#0a0f1d" style="--chip-fg:#f43f5e; --chip-bg:#0a0f1d;" title="Synthwave Glow"></button>
             </div>
           </div>
         </div>
@@ -261,10 +279,12 @@
         <!-- QR Preview & Download Action Card -->
         <div class="generator-preview-card glass-panel">
           <div class="card-header">
-            <h2><i class="fa-solid fa-eye"></i> Live QR Preview</h2>
+            <h2><i class="fa-solid fa-microchip"></i> Neural QR Preview</h2>
+            <span class="pulse-indicator"><span class="pulse-dot"></span> Active</span>
           </div>
 
           <div class="preview-canvas-wrapper" id="preview-container">
+            <div class="preview-hud-grid"></div>
             <!-- QR code rendered dynamically here -->
             <div id="qr-output" class="qr-canvas-holder"></div>
           </div>
