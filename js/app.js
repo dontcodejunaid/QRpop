@@ -35,7 +35,10 @@ function initNavigation() {
 
       // Special tab handlers
       if (targetId === 'scanner') {
-        // Ready for scan
+        // Automatically start camera & trigger permission request when user opens Scan tab
+        if (window.qrScanner && !window.qrScanner.isCameraRunning) {
+          window.qrScanner.startCamera();
+        }
       } else {
         // If navigating away from scanner, stop camera to release device resource
         if (window.qrScanner && window.qrScanner.isCameraRunning) {
