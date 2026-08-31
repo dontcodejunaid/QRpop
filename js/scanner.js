@@ -236,33 +236,40 @@ class QRScanner {
   }
 
   onScanSuccess(decodedText, decodedResult) {
+    if (!decodedText || !decodedText.trim()) return;
+
     // Immediately stop camera feed upon successful detection
     if (this.isCameraRunning) {
       if (navigator.vibrate) navigator.vibrate(120);
       this.stopCamera();
     }
 
-    const parsed = this.parsePayload(decodedText);
-    this.currentScanResult = {
-      raw: decodedText,
-      parsed: parsed,
-      timestamp: new Date()
-    };
+    try {
+      const parsed = this.parsePayload(decodedText);
+      this.currentScanResult = {
+        raw: decodedText,
+        parsed: parsed,
+        timestamp: new Date()
+      };
 
-    // Save to history
-    if (window.historyManager) {
-      window.historyManager.addRecord('scanned', parsed.typeLabel, decodedText);
-    }
+      // Save to history
+      if (window.historyManager) {
+        window.historyManager.addRecord('scanned', parsed.typeLabel, decodedText);
+      }
 
-    this.displayResult(this.currentScanResult);
+      this.displayResult(this.currentScanResult);
 
-    if (window.showToast) {
-      window.showToast('QR Code detected & camera paused!', 'success');
-    }
+      if (window.showToast) {
+        window.showToast('QR Code decoded successfully!', 'success');
+      }
 
-    // Scroll to decoded result area smoothly on mobile
-    if (window.innerWidth <= 900 && this.resultCard) {
-      this.resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Scroll to decoded result area smoothly on mobile
+      const resultEl = document.getElementById('scanner-result-card');
+      if (resultEl && window.innerWidth <= 900) {
+        resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } catch (err) {
+      console.error('Error displaying scanned result:', err);
     }
   }
 
@@ -362,39 +369,52 @@ class QRScanner {
     if (!result) return;
     const { parsed, raw } = result;
 
-    if (this.emptyState) this.emptyState.style.display = 'none';
-    if (this.resultBox) this.resultBox.style.display = 'block';
+    const emptyState = document.getElementById('result-empty-state');
+    const resultBox = document.getElementById('result-content-box');
+    const resultBadge = document.getElementById('result-type-badge');
+    const resultTitle = document.getElementById('result-title');
+    const resultTimestamp = document.getElementById('result-timestamp');
+    const resultIcon = document.getElementById('result-icon-badge');
+    const resultRawText = document.getElementById('result-raw-text');
+    const btnOpen = document.getElementById('btn-open-result');
 
-    if (this.resultBadge) this.resultBadge.textContent = 'Decoded';
-    if (this.resultTitle) this.resultTitle.textContent = parsed.typeLabel;
-    if (this.resultTimestamp) this.resultTimestamp.textContent = 'Just now';
+    if (emptyState) emptyState.style.display = 'none';
+    if (resultBox) resultBox.style.display = 'block';
 
-    if (this.resultIcon) {
-      this.resultIcon.innerHTML = `<i class="fa-solid ${parsed.icon}"></i>`;
+    if (resultBadge) resultBadge.textContent = 'Decoded';
+    if (resultTitle) resultTitle.textContent = parsed.typeLabel;
+    if (resultTimestamp) resultTimestamp.textContent = 'Just now';
+
+    if (resultIcon) {
+      resultIcon.innerHTML = `<i class="fa-solid ${parsed.icon}"></i>`;
     }
 
-    if (this.resultRawText) {
-      this.resultRawText.innerHTML = parsed.displayHtml;
+    if (resultRawText) {
+      resultRawText.innerHTML = parsed.displayHtml;
     }
 
-    if (this.btnOpen) {
+    if (btnOpen) {
       if (parsed.actionUrl) {
-        this.btnOpen.style.display = 'inline-flex';
-        this.btnOpen.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> ${parsed.actionLabel || 'Open Link'}`;
-        this.btnOpen.onclick = () => {
+        btnOpen.style.display = 'inline-flex';
+        btnOpen.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> ${parsed.actionLabel || 'Open Link'}`;
+        btnOpen.onclick = () => {
           window.open(parsed.actionUrl, '_blank', 'noopener,noreferrer');
         };
       } else {
-        this.btnOpen.style.display = 'none';
+        btnOpen.style.display = 'none';
       }
     }
   }
 
   resetResultView() {
     this.currentScanResult = null;
-    if (this.emptyState) this.emptyState.style.display = 'block';
-    if (this.resultBox) this.resultBox.style.display = 'none';
-    if (this.resultBadge) this.resultBadge.textContent = 'Awaiting Scan';
+    const emptyState = document.getElementById('result-empty-state');
+    const resultBox = document.getElementById('result-content-box');
+    const resultBadge = document.getElementById('result-type-badge');
+
+    if (emptyState) emptyState.style.display = 'block';
+    if (resultBox) resultBox.style.display = 'none';
+    if (resultBadge) resultBadge.textContent = 'Awaiting Scan';
   }
 
   escapeHtml(str) {
