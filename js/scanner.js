@@ -161,10 +161,12 @@ class QRScanner {
         ? { deviceId: { exact: this.selectedCameraId } }
         : { facingMode: 'environment' };
 
+      // Allow full-frame camera scanning without restrictive bounding box
       const config = {
-        fps: 15,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0
+        fps: 24,
+        experimentalFeatures: {
+          useBarCodeDetectorIfSupported: true
+        }
       };
 
       await this.html5QrCode.start(
@@ -174,7 +176,7 @@ class QRScanner {
           this.onScanSuccess(decodedText, decodedResult);
         },
         (errorMessage) => {
-          // Continuous scanning error, ignore in normal operation
+          // Frame not containing QR, normal
         }
       );
 
