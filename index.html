@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRpop - Fast & Modern QR Generator & Scanner</title>
+  <meta name="description" content="A fast, responsive web application to generate customizable QR codes and scan QR codes with live camera or image upload.">
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for clean modern icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- External CDNs for QR generation & scanning -->
+  <!-- qr-code-styling for high-quality, custom styled Canvas/SVG QR generation -->
+  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
+  <!-- html5-qrcode for camera feed and image decoding -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+  <div class="app-background">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+  </div>
+
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <i class="fa-solid fa-qrcode"></i>
+        </div>
+        <div class="logo-text">
+          <h1>QR<span>pop</span></h1>
+          <p class="tagline">Generate & Scan Instant QR Codes</p>
+        </div>
+      </div>
+      
+      <!-- Segmented Navigation Bar -->
+      <nav class="nav-segmented" aria-label="Main Navigation">
+        <button class="nav-tab active" id="tab-btn-generator" data-tab="generator">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Generate</span>
+        </button>
+        <button class="nav-tab" id="tab-btn-scanner" data-tab="scanner">
+          <i class="fa-solid fa-camera"></i>
+          <span>Scan</span>
+        </button>
+        <button class="nav-tab" id="tab-btn-history" data-tab="history">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span>History</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- ==================== GENERATOR SECTION ==================== -->
+    <section class="tab-content active" id="section-generator">
+      <div class="generator-container">
+        <!-- Generator Form Area -->
+        <div class="generator-form-card glass-panel">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-sliders"></i> QR Type & Data</h2>
+            <span class="badge">Live Preview</span>
+          </div>
+
+          <!-- Type Selector Pills -->
+          <div class="type-selector" id="qr-type-selector">
+            <button class="type-btn active" data-type="text">
+              <i class="fa-solid fa-align-left"></i>
+              <span>Text</span>
+            </button>
+            <button class="type-btn" data-type="url">
+              <i class="fa-solid fa-link"></i>
+              <span>URL</span>
+            </button>
+            <button class="type-btn" data-type="wifi">
+              <i class="fa-solid fa-wifi"></i>
+              <span>Wi-Fi</span>
+            </button>
+            <button class="type-btn" data-type="vcard">
+              <i class="fa-solid fa-address-card"></i>
+              <span>vCard</span>
+            </button>
+            <button class="type-btn" data-type="phone">
+              <i class="fa-solid fa-phone"></i>
+              <span>Phone</span>
+            </button>
+            <button class="type-btn" data-type="email">
+              <i class="fa-solid fa-envelope"></i>
+              <span>Email</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Form Inputs -->
+          <div class="form-body">
+            <!-- Text Form -->
+            <div class="type-form active" id="form-text">
+              <div class="form-group">
+                <label for="input-text">Plain Text Content</label>
+                <textarea id="input-text" rows="4" placeholder="Type any text or message here..."></textarea>
+              </div>
+            </div>
+
+            <!-- URL Form -->
+            <div class="type-form" id="form-url">
+              <div class="form-group">
+                <label for="input-url">Website URL</label>
+                <div class="input-icon-wrap">
+                  <i class="fa-solid fa-globe"></i>
+                  <input type="url" id="input-url" placeholder="https://example.com">
+                </div>
+              </div>
+            </div>
+
+            <!-- Wi-Fi Form -->
+            <div class="type-form" id="form-wifi">
+              <div class="form-group">
+                <label for="input-wifi-ssid">Network Name (SSID)</label>
+                <input type="text" id="input-wifi-ssid" placeholder="Home or Office Wi-Fi">
+              </div>
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="input-wifi-password">Password</label>
+                  <div class="input-icon-wrap">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="text" id="input-wifi-password" placeholder="Password (if protected)">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="select-wifi-auth">Security</label>
+                  <select id="select-wifi-auth">
+                    <option value="WPA">WPA/WPA2/WPA3</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">None (Open)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-checkbox">
+                <input type="checkbox" id="input-wifi-hidden">
+                <label for="input-wifi-hidden">Hidden Network</label>
+              </div>
+            </div>
+
+            <!-- vCard / Contact Form -->
+            <div class="type-form" id="form-vcard">
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="input-vcard-fn">First Name</label>
+                  <input type="text" id="input-vcard-fn" placeholder="John">
+                </div>
+                <div class="form-group flex-1">
+                  <label for="input-vcard-ln">Last Name</label>
+                  <input type="text" id="input-vcard-ln" placeholder="Doe">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="input-vcard-org">Organization / Title</label>
+                  <input type="text" id="input-vcard-org" placeholder="Acme Inc.">
+                </div>
+                <div class="form-group flex-1">
+                  <label for="input-vcard-phone">Mobile Phone</label>
+                  <input type="tel" id="input-vcard-phone" placeholder="+1 555 0192">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="input-vcard-email">Email Address</label>
+                <input type="email" id="input-vcard-email" placeholder="john.doe@example.com">
+              </div>
+              <div class="form-group">
+                <label for="input-vcard-url">Website</label>
+                <input type="url" id="input-vcard-url" placeholder="https://johndoe.com">
+              </div>
+            </div>
+
+            <!-- Phone Form -->
+            <div class="type-form" id="form-phone">
+              <div class="form-group">
+                <label for="input-phone">Phone Number</label>
+                <div class="input-icon-wrap">
+                  <i class="fa-solid fa-phone"></i>
+                  <input type="tel" id="input-phone" placeholder="+1 234 567 8900">
+                </div>
+              </div>
+            </div>
+
+            <!-- Email Form -->
+            <div class="type-form" id="form-email">
+              <div class="form-group">
+                <label for="input-email-to">Recipient Email</label>
+                <input type="email" id="input-email-to" placeholder="hello@company.com">
+              </div>
+              <div class="form-group">
+                <label for="input-email-subject">Subject</label>
+                <input type="text" id="input-email-subject" placeholder="Inquiry about...">
+              </div>
+              <div class="form-group">
+                <label for="input-email-body">Message Body</label>
+                <textarea id="input-email-body" rows="3" placeholder="Hello, I'd like to ask..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customization Accordion / Section -->
+          <div class="customization-section">
+            <h3 class="sub-header"><i class="fa-solid fa-palette"></i> Styling & Appearance</h3>
+            <div class="customization-grid">
+              <div class="custom-item">
+                <label>Foreground Color</label>
+                <div class="color-picker-wrap">
+                  <input type="color" id="qr-fg-color" value="#0f172a">
+                  <span id="fg-color-hex">#0f172a</span>
+                </div>
+              </div>
+              <div class="custom-item">
+                <label>Background Color</label>
+                <div class="color-picker-wrap">
+                  <input type="color" id="qr-bg-color" value="#ffffff">
+                  <span id="bg-color-hex">#ffffff</span>
+                </div>
+              </div>
+              <div class="custom-item">
+                <label>Corner & Dot Style</label>
+                <select id="qr-dot-style">
+                  <option value="square">Standard (Square)</option>
+                  <option value="dots">Dots (Rounded)</option>
+                  <option value="rounded">Smooth Rounded</option>
+                  <option value="classy-rounded">Classy Smooth</option>
+                </select>
+              </div>
+              <div class="custom-item">
+                <label>Resolution (Size)</label>
+                <select id="qr-res-select">
+                  <option value="300">Standard (300px)</option>
+                  <option value="600" selected>HD (600px)</option>
+                  <option value="1200">Ultra (1200px)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Color Palette Presets -->
+            <div class="preset-palettes">
+              <span class="preset-label">Quick Themes:</span>
+              <button class="palette-chip active" data-fg="#0f172a" data-bg="#ffffff" style="--chip-fg:#0f172a; --chip-bg:#ffffff;" title="Classic Dark"></button>
+              <button class="palette-chip" data-fg="#3b82f6" data-bg="#ffffff" style="--chip-fg:#3b82f6; --chip-bg:#ffffff;" title="Electric Blue"></button>
+              <button class="palette-chip" data-fg="#8b5cf6" data-bg="#ffffff" style="--chip-fg:#8b5cf6; --chip-bg:#ffffff;" title="Royal Purple"></button>
+              <button class="palette-chip" data-fg="#10b981" data-bg="#ffffff" style="--chip-fg:#10b981; --chip-bg:#ffffff;" title="Emerald Green"></button>
+              <button class="palette-chip" data-fg="#ec4899" data-bg="#ffffff" style="--chip-fg:#ec4899; --chip-bg:#ffffff;" title="Vibrant Pink"></button>
+              <button class="palette-chip" data-fg="#ffffff" data-bg="#0f172a" style="--chip-fg:#ffffff; --chip-bg:#0f172a;" title="Dark Mode"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- QR Preview & Download Action Card -->
+        <div class="generator-preview-card glass-panel">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-eye"></i> Live QR Preview</h2>
+          </div>
+
+          <div class="preview-canvas-wrapper" id="preview-container">
+            <!-- QR code rendered dynamically here -->
+            <div id="qr-output" class="qr-canvas-holder"></div>
+          </div>
+
+          <div class="preview-actions">
+            <div class="action-buttons-grid">
+              <button class="btn btn-primary" id="btn-download-png">
+                <i class="fa-solid fa-download"></i> Download PNG
+              </button>
+              <button class="btn btn-secondary" id="btn-download-svg">
+                <i class="fa-solid fa-file-code"></i> Download SVG
+              </button>
+              <button class="btn btn-secondary" id="btn-copy-qr">
+                <i class="fa-regular fa-copy"></i> Copy Image
+              </button>
+              <button class="btn btn-secondary" id="btn-share-qr">
+                <i class="fa-solid fa-share-nodes"></i> Share
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCANNER SECTION ==================== -->
+    <section class="tab-content" id="section-scanner">
+      <div class="scanner-container">
+        <!-- Camera Scanner Card -->
+        <div class="scanner-main-card glass-panel">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-camera"></i> Live Camera Scanner</h2>
+            <div class="camera-controls">
+              <select id="camera-select" class="camera-select" title="Switch Camera" style="display:none;"></select>
+            </div>
+          </div>
+
+          <!-- Camera Stream Container -->
+          <div class="camera-viewport-wrapper">
+            <div id="qr-reader" class="qr-reader-element"></div>
+            
+            <!-- Placeholder / Initial State when camera is stopped -->
+            <div class="camera-placeholder" id="camera-placeholder">
+              <div class="placeholder-icon">
+                <i class="fa-solid fa-video"></i>
+              </div>
+              <h3>Camera is Idle</h3>
+              <p>Click "Start Camera" to scan QR codes using your device camera.</p>
+              <button class="btn btn-primary btn-lg" id="btn-start-camera">
+                <i class="fa-solid fa-play"></i> Start Camera
+              </button>
+            </div>
+
+            <!-- Active Scan Overlay -->
+            <div class="scanner-active-overlay" id="scanner-overlay" style="display:none;">
+              <div class="scan-frame">
+                <div class="scan-line"></div>
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+              </div>
+              <p class="scan-instructions">Align QR code inside frame</p>
+            </div>
+          </div>
+
+          <!-- Camera Action Controls -->
+          <div class="camera-action-bar" id="camera-action-bar" style="display:none;">
+            <button class="btn btn-danger" id="btn-stop-camera">
+              <i class="fa-solid fa-stop"></i> Stop Camera
+            </button>
+          </div>
+
+          <!-- File Upload Option -->
+          <div class="upload-dropzone-divider">
+            <span>OR SCAN FROM IMAGE FILE</span>
+          </div>
+
+          <div class="file-upload-zone" id="file-drop-zone">
+            <input type="file" id="qr-file-input" accept="image/*" class="file-hidden-input">
+            <div class="drop-zone-content">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <p><strong>Click to browse</strong> or drag & drop a QR image here</p>
+              <span class="support-hint">Supports PNG, JPG, WEBP, SVG</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scanner Result Area -->
+        <div class="scanner-result-card glass-panel" id="scanner-result-card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-square-poll-horizontal"></i> Decoded Result</h2>
+            <span class="badge" id="result-type-badge">Awaiting Scan</span>
+          </div>
+
+          <div class="result-display-area" id="result-display-area">
+            <div class="empty-state" id="result-empty-state">
+              <i class="fa-solid fa-qrcode"></i>
+              <p>Scan a QR code to view and interact with the decoded contents.</p>
+            </div>
+
+            <div class="result-content-box" id="result-content-box" style="display:none;">
+              <div class="result-meta">
+                <div class="result-icon-badge" id="result-icon-badge">
+                  <i class="fa-solid fa-font"></i>
+                </div>
+                <div class="result-info">
+                  <h4 id="result-title">Plain Text</h4>
+                  <span id="result-timestamp">Just now</span>
+                </div>
+              </div>
+
+              <!-- Raw Text / Parsed Details -->
+              <div class="result-payload-text" id="result-raw-text"></div>
+
+              <!-- Action Buttons -->
+              <div class="result-actions-grid" id="result-actions-container">
+                <button class="btn btn-primary" id="btn-copy-result">
+                  <i class="fa-regular fa-copy"></i> Copy Content
+                </button>
+                <button class="btn btn-secondary" id="btn-open-result" style="display:none;">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Link
+                </button>
+                <button class="btn btn-secondary" id="btn-share-result">
+                  <i class="fa-solid fa-share-nodes"></i> Share
+                </button>
+                <button class="btn btn-outline" id="btn-scan-again">
+                  <i class="fa-solid fa-rotate-right"></i> Scan Again
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== HISTORY SECTION ==================== -->
+    <section class="tab-content" id="section-history">
+      <div class="history-container glass-panel">
+        <div class="card-header">
+          <div>
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Activity History</h2>
+            <p class="sub-text">View your recent generated and scanned QR codes saved locally.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btn-clear-history">
+            <i class="fa-solid fa-trash-can"></i> Clear All
+          </button>
+        </div>
+
+        <div class="history-filter-bar">
+          <button class="filter-chip active" data-filter="all">All (<span id="count-all">0</span>)</button>
+          <button class="filter-chip" data-filter="generated">Generated (<span id="count-generated">0</span>)</button>
+          <button class="filter-chip" data-filter="scanned">Scanned (<span id="count-scanned">0</span>)</button>
+        </div>
+
+        <div class="history-list" id="history-list">
+          <!-- Populated dynamically via history.js -->
+          <div class="empty-state" id="history-empty">
+            <i class="fa-regular fa-folder-open"></i>
+            <p>No history records yet. Generated and scanned QR codes will appear here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/history.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/scanner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
