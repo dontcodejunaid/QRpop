@@ -265,8 +265,19 @@ class QRGenerator {
     if (!this.qrCodeInstance) return;
     const res = parseInt(document.getElementById('qr-res-select')?.value || '600', 10);
     
-    // Save to history on download
+    // Always sync current payload
     const payload = this.buildPayload();
+    this.options.data = payload;
+
+    // Ensure the instance has the exact payload and dimension before download
+    this.qrCodeInstance.update({
+      data: payload,
+      dotsOptions: this.options.dotsOptions,
+      backgroundOptions: this.options.backgroundOptions,
+      cornersSquareOptions: this.options.cornersSquareOptions,
+      cornersDotOptions: this.options.cornersDotOptions
+    });
+
     if (window.historyManager) {
       window.historyManager.addRecord('generated', this.currentType.toUpperCase(), payload);
     }
@@ -286,6 +297,10 @@ class QRGenerator {
   async copyQRImage() {
     try {
       if (!this.qrCodeInstance) return;
+      const payload = this.buildPayload();
+      this.options.data = payload;
+      this.qrCodeInstance.update({ data: payload });
+
       const rawBlob = await this.qrCodeInstance.getRawData('png');
       if (rawBlob && navigator.clipboard && window.ClipboardItem) {
         const item = new ClipboardItem({ 'image/png': rawBlob });
@@ -293,7 +308,7 @@ class QRGenerator {
         if (window.showToast) window.showToast('QR Code image copied to clipboard!', 'success');
       } else {
         // Fallback to copying content text
-        await navigator.clipboard.writeText(this.buildPayload());
+        await navigator.clipboard.writeText(payload);
         if (window.showToast) window.showToast('QR payload text copied to clipboard!', 'info');
       }
     } catch (err) {
