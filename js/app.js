@@ -84,6 +84,22 @@ function initNavigation() {
       }
     });
   });
+
+  // Home Quick Action Button Navigation
+  const btnHomeGen = document.getElementById('btn-home-go-generate');
+  const btnHomeScan = document.getElementById('btn-home-go-scan');
+
+  if (btnHomeGen) {
+    btnHomeGen.addEventListener('click', () => {
+      document.getElementById('tab-btn-generator')?.click();
+    });
+  }
+
+  if (btnHomeScan) {
+    btnHomeScan.addEventListener('click', () => {
+      document.getElementById('tab-btn-scanner')?.click();
+    });
+  }
 }
 
 /**

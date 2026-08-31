@@ -1441,8 +1441,241 @@ textarea {
   to { transform: translateX(0); opacity: 1; }
 }
 
+/* ==================== HOME & ABOUT SECTIONS ==================== */
+.home-hero-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.home-hero-card {
+  text-align: center;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-xl);
+  background: rgba(82, 162, 123, 0.15);
+  color: var(--accent-primary);
+  border: 1px solid rgba(82, 162, 123, 0.35);
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.3px;
+}
+
+.hero-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+  margin-bottom: 1rem;
+  max-width: 750px;
+}
+
+.hero-title span {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 680px;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.home-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.home-action-card {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  transition: transform var(--transition-normal), border-color var(--transition-normal);
+  background: var(--bg-card);
+}
+
+.home-action-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-primary);
+}
+
+.home-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: rgba(82, 162, 123, 0.15);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.home-action-card h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.home-action-card p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.home-action-card .btn {
+  width: 100%;
+}
+
+.home-features-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-glass);
+  text-align: left;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.feature-item i {
+  font-size: 1.35rem;
+  color: var(--accent-primary);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.feature-item h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.feature-item span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* About / Help Section */
+.about-container {
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-card {
+  padding: 1.5rem;
+  background: var(--bg-card);
+}
+
+.about-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.about-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: rgba(82, 162, 123, 0.15);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.about-card-header h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.about-card-header span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.guide-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.guide-steps li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.guide-steps strong {
+  color: var(--text-primary);
+}
+
+.about-faq-section {
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+}
+
+.about-privacy-text {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
 /* Responsive Media Queries & Mobile Optimizations */
 @media (max-width: 1024px) {
+  .home-cards-grid,
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-features-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
   .generator-container,
   .scanner-container {
     grid-template-columns: 1fr;
