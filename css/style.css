@@ -115,15 +115,16 @@ body {
 }
 
 .brand-logo-img {
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(251, 146, 60, 0.45));
+  filter: drop-shadow(0 0 10px rgba(251, 146, 60, 0.55));
   transition: transform 0.3s ease;
+  flex-shrink: 0;
 }
 
 .brand-logo-img:hover {
-  transform: scale(1.08) rotate(4deg);
+  transform: scale(1.1) rotate(5deg);
 }
 
 .logo-icon {
