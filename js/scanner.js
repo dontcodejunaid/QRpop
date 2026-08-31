@@ -97,6 +97,7 @@ class QRScanner {
     const btnCopy = document.getElementById('btn-copy-result');
     const btnShare = document.getElementById('btn-share-result');
     const btnScanAgain = document.getElementById('btn-scan-again');
+    const btnCameraScanAgain = document.getElementById('btn-camera-scan-again');
 
     if (btnCopy) {
       btnCopy.addEventListener('click', () => {
@@ -124,11 +125,17 @@ class QRScanner {
       });
     }
 
+    const handleScanAgain = () => {
+      this.resetResultView();
+      this.startCamera();
+    };
+
     if (btnScanAgain) {
-      btnScanAgain.addEventListener('click', () => {
-        this.resetResultView();
-        this.startCamera();
-      });
+      btnScanAgain.addEventListener('click', handleScanAgain);
+    }
+
+    if (btnCameraScanAgain) {
+      btnCameraScanAgain.addEventListener('click', handleScanAgain);
     }
   }
 
