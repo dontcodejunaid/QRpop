@@ -1,20 +1,20 @@
 :root {
-  --bg-primary: #0a0f1d;
-  --bg-surface: rgba(18, 25, 44, 0.75);
-  --bg-surface-solid: #131b30;
-  --bg-card: rgba(25, 36, 62, 0.6);
-  --bg-input: rgba(15, 23, 42, 0.85);
+  --bg-primary: #0a110e;
+  --bg-surface: rgba(18, 30, 24, 0.75);
+  --bg-surface-solid: #13221b;
+  --bg-card: rgba(22, 38, 30, 0.6);
+  --bg-input: rgba(12, 22, 17, 0.85);
   --border-glass: rgba(255, 255, 255, 0.08);
-  --border-focus: #3b82f6;
+  --border-focus: #52a27b;
 
-  --accent-primary: #3b82f6;
-  --accent-secondary: #6366f1;
-  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  --accent-hover: #2563eb;
+  --accent-primary: #52a27b;
+  --accent-secondary: #7bbd99;
+  --accent-gradient: linear-gradient(135deg, #448967 0%, #68b38d 100%);
+  --accent-hover: #3d795b;
   
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #f4fbf7;
+  --text-secondary: #9cb4a7;
+  --text-muted: #647b70;
 
   --status-success: #10b981;
   --status-error: #ef4444;
@@ -25,8 +25,8 @@
   --radius-lg: 20px;
   --radius-xl: 28px;
 
-  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 25px rgba(59, 130, 246, 0.35);
+  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 25px rgba(82, 162, 123, 0.35);
   --glass-blur: blur(16px);
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -67,7 +67,7 @@ body {
   position: absolute;
   border-radius: 50%;
   filter: blur(120px);
-  opacity: 0.25;
+  opacity: 0.22;
   transition: all 1s ease-in-out;
 }
 
@@ -76,7 +76,7 @@ body {
   left: -5%;
   width: 550px;
   height: 550px;
-  background: radial-gradient(circle, #3b82f6 0%, rgba(99, 102, 241, 0) 70%);
+  background: radial-gradient(circle, #52a27b 0%, rgba(123, 189, 153, 0) 70%);
 }
 
 .orb-2 {
@@ -84,7 +84,7 @@ body {
   right: -5%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, #8b5cf6 0%, rgba(236, 72, 153, 0) 70%);
+  background: radial-gradient(circle, #3d795b 0%, rgba(42, 79, 60, 0) 70%);
 }
 
 /* Header & Segmented Navigation */
@@ -264,9 +264,9 @@ body {
   font-size: 0.75rem;
   padding: 0.25rem 0.65rem;
   border-radius: var(--radius-xl);
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(82, 162, 123, 0.18);
+  color: #7bbd99;
+  border: 1px solid rgba(82, 162, 123, 0.35);
   font-weight: 600;
 }
 
