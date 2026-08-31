@@ -216,23 +216,76 @@ class QRScanner {
       return;
     }
 
+    // If camera is running, stop it first
+    if (this.isCameraRunning) {
+      await this.stopCamera();
+    }
+
+    if (window.showToast) window.showToast('Processing image...', 'info');
+
+    // Method 1: Try jsQR via Canvas for direct raw pixel decoding (super fast & accurate)
+    const jsQrResult = await this.decodeWithJsQR(file);
+    if (jsQrResult) {
+      this.onScanSuccess(jsQrResult, null);
+      return;
+    }
+
+    // Method 2: Fallback to Html5Qrcode.scanFile
     try {
       if (!this.html5QrCode) {
         this.html5QrCode = new Html5Qrcode('qr-reader');
       }
+      const decodedText = await this.html5QrCode.scanFile(file, true);
+      if (decodedText) {
+        this.onScanSuccess(decodedText, null);
+        return;
+      }
+    } catch (err) {
+      console.warn('Html5Qrcode scanFile fallback also failed:', err);
+    }
 
-      // If camera is running, stop it first
-      if (this.isCameraRunning) {
-        await this.stopCamera();
+    if (window.showToast) window.showToast('No QR code detected in this image', 'error');
+  }
+
+  decodeWithJsQR(file) {
+    return new Promise((resolve) => {
+      if (typeof jsQR === 'undefined') {
+        resolve(null);
+        return;
       }
 
-      if (window.showToast) window.showToast('Processing image...', 'info');
-      const decodedText = await this.html5QrCode.scanFile(file, true);
-      this.onScanSuccess(decodedText, null);
-    } catch (err) {
-      console.warn('File scan failed', err);
-      if (window.showToast) window.showToast('No QR code detected in this image', 'error');
-    }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+              inversionAttempts: 'attemptBoth'
+            });
+
+            if (code && code.data) {
+              resolve(code.data);
+            } else {
+              resolve(null);
+            }
+          } catch (canvasErr) {
+            console.warn('Canvas decode error:', canvasErr);
+            resolve(null);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = e.target.result;
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
   }
 
   onScanSuccess(decodedText, decodedResult) {
