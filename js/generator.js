@@ -12,8 +12,8 @@ class QRGenerator {
     this.options = {
       width: 300,
       height: 300,
-      type: 'svg',
-      data: 'Welcome to QRpop!',
+      type: 'canvas',
+      data: '',
       dotsOptions: {
         color: '#000000',
         type: 'square'
@@ -42,17 +42,7 @@ class QRGenerator {
     this.initCustomizations();
     this.initActionButtons();
 
-    // Initialize QR Code Styling instance
-    if (typeof QRCodeStyling !== 'undefined') {
-      this.qrCodeInstance = new QRCodeStyling(this.options);
-      const container = document.getElementById('qr-output');
-      if (container) {
-        container.innerHTML = '';
-        this.qrCodeInstance.append(container);
-      }
-    }
-
-    // Trigger initial generation
+    // Trigger initial generation check
     this.updateQR(false);
   }
 
@@ -306,9 +296,13 @@ class QRGenerator {
 
     if (!payload || !payload.trim()) {
       // Show empty placeholder
-      if (qrHolder) qrHolder.style.display = 'none';
+      if (qrHolder) {
+        qrHolder.innerHTML = '';
+        qrHolder.style.display = 'none';
+      }
       if (placeholder) placeholder.style.display = 'flex';
       if (previewWrapper) previewWrapper.classList.add('is-empty');
+      this.lastGeneratedPayload = '';
       return;
     }
 
@@ -319,10 +313,19 @@ class QRGenerator {
 
     this.options.data = payload;
 
-    if (this.qrCodeInstance) {
-      this.qrCodeInstance.update({
-        data: payload
+    if (qrHolder && typeof QRCodeStyling !== 'undefined') {
+      qrHolder.innerHTML = '';
+      this.qrCodeInstance = new QRCodeStyling({
+        width: 300,
+        height: 300,
+        type: 'canvas',
+        data: payload,
+        dotsOptions: this.options.dotsOptions,
+        backgroundOptions: this.options.backgroundOptions,
+        cornersSquareOptions: this.options.cornersSquareOptions,
+        cornersDotOptions: this.options.cornersDotOptions
       });
+      this.qrCodeInstance.append(qrHolder);
     }
 
     if (saveToHist && payload !== this.lastGeneratedPayload) {
@@ -350,14 +353,15 @@ class QRGenerator {
       if (window.showToast) window.showToast('Please enter QR content to generate and download.', 'error');
       return;
     }
-    if (!this.qrCodeInstance) return;
+
     const res = parseInt(document.getElementById('qr-res-select')?.value || '600', 10);
-    
-    // Always sync current payload
     this.options.data = payload;
 
-    // Ensure the instance has the exact payload and dimension before download
-    this.qrCodeInstance.update({
+    // Create dedicated fresh instance with the exact current payload and resolution for downloading
+    const downloadInstance = new QRCodeStyling({
+      width: res,
+      height: res,
+      type: extension === 'svg' ? 'svg' : 'canvas',
       data: payload,
       dotsOptions: this.options.dotsOptions,
       backgroundOptions: this.options.backgroundOptions,
@@ -365,13 +369,16 @@ class QRGenerator {
       cornersDotOptions: this.options.cornersDotOptions
     });
 
+    // Also update preview instance
+    if (this.qrCodeInstance) {
+      this.qrCodeInstance.update({ data: payload });
+    }
+
     this.saveCurrentQRToHistory();
 
-    this.qrCodeInstance.download({
+    downloadInstance.download({
       name: `qrpop-${this.currentType}-${Date.now()}`,
-      extension: extension,
-      width: res,
-      height: res
+      extension: extension
     });
 
     if (window.showToast) {
@@ -386,13 +393,22 @@ class QRGenerator {
       return;
     }
     try {
-      if (!this.qrCodeInstance) return;
       this.options.data = payload;
-      this.qrCodeInstance.update({ data: payload });
+
+      const copyInstance = new QRCodeStyling({
+        width: 600,
+        height: 600,
+        type: 'canvas',
+        data: payload,
+        dotsOptions: this.options.dotsOptions,
+        backgroundOptions: this.options.backgroundOptions,
+        cornersSquareOptions: this.options.cornersSquareOptions,
+        cornersDotOptions: this.options.cornersDotOptions
+      });
 
       this.saveCurrentQRToHistory();
 
-      const rawBlob = await this.qrCodeInstance.getRawData('png');
+      const rawBlob = await copyInstance.getRawData('png');
       if (rawBlob && navigator.clipboard && window.ClipboardItem) {
         const item = new ClipboardItem({ 'image/png': rawBlob });
         await navigator.clipboard.write([item]);
@@ -406,7 +422,7 @@ class QRGenerator {
       console.warn('Clipboard write failed', err);
       // Fallback
       if (navigator.clipboard) {
-        await navigator.clipboard.writeText(this.buildPayload());
+        await navigator.clipboard.writeText(payload);
         if (window.showToast) window.showToast('QR text copied to clipboard', 'info');
       }
     }
@@ -420,9 +436,20 @@ class QRGenerator {
     }
     this.saveCurrentQRToHistory();
 
+    const shareInstance = new QRCodeStyling({
+      width: 600,
+      height: 600,
+      type: 'canvas',
+      data: payload,
+      dotsOptions: this.options.dotsOptions,
+      backgroundOptions: this.options.backgroundOptions,
+      cornersSquareOptions: this.options.cornersSquareOptions,
+      cornersDotOptions: this.options.cornersDotOptions
+    });
+
     if (navigator.share) {
       try {
-        const rawBlob = await this.qrCodeInstance?.getRawData('png');
+        const rawBlob = await shareInstance.getRawData('png');
         if (rawBlob && navigator.canShare && navigator.canShare({ files: [new File([rawBlob], 'qr.png', { type: 'image/png' })] })) {
           const file = new File([rawBlob], `qrpop-${Date.now()}.png`, { type: 'image/png' });
           await navigator.share({
