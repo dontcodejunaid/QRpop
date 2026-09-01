@@ -168,12 +168,19 @@ class QRScanner {
         ? { deviceId: { exact: this.selectedCameraId } }
         : { facingMode: 'environment' };
 
-      // Allow full-frame camera scanning without restrictive bounding box
+      // Config with broad aspect ratio & optimal scanning frequency
       const config = {
-        fps: 24,
-        experimentalFeatures: {
-          useBarCodeDetectorIfSupported: true
-        }
+        fps: 15,
+        qrbox: (viewfinderWidth, viewfinderHeight) => {
+          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+          const qrboxSize = Math.floor(minEdge * 0.85);
+          return {
+            width: qrboxSize,
+            height: qrboxSize
+          };
+        },
+        aspectRatio: 1.0,
+        disableFlip: false
       };
 
       await this.html5QrCode.start(
@@ -183,7 +190,8 @@ class QRScanner {
           this.onScanSuccess(decodedText, decodedResult);
         },
         (errorMessage) => {
-          // Frame not containing QR, normal
+          // Continuous video scanning frame fallback using jsQR directly from video element
+          this.scanVideoFrameWithJsQR();
         }
       );
 
@@ -202,6 +210,38 @@ class QRScanner {
       }
       if (window.showToast) window.showToast(msg, 'error');
       this.stopCamera();
+    }
+  }
+
+  scanVideoFrameWithJsQR() {
+    if (!this.isCameraRunning || typeof jsQR === 'undefined') return;
+    try {
+      const video = document.querySelector('#qr-reader video');
+      if (!video || video.readyState < video.HAVE_CURRENT_DATA) return;
+
+      if (!this._scanCanvas) {
+        this._scanCanvas = document.createElement('canvas');
+        this._scanCtx = this._scanCanvas.getContext('2d', { willReadFrequently: true });
+      }
+
+      const w = video.videoWidth;
+      const h = video.videoHeight;
+      if (w === 0 || h === 0) return;
+
+      this._scanCanvas.width = w;
+      this._scanCanvas.height = h;
+      this._scanCtx.drawImage(video, 0, 0, w, h);
+
+      const imageData = this._scanCtx.getImageData(0, 0, w, h);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: 'attemptBoth'
+      });
+
+      if (code && code.data && code.data.trim()) {
+        this.onScanSuccess(code.data.trim(), null);
+      }
+    } catch (e) {
+      // Ignored for individual frame
     }
   }
 

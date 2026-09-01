@@ -63,6 +63,26 @@ class QRGenerator {
     }
   }
 
+  clearForm() {
+    // Reset all form inputs to blank/defaults
+    const inputs = document.querySelectorAll('.form-body input, .form-body textarea');
+    inputs.forEach(input => {
+      if (input.type === 'checkbox') {
+        input.checked = false;
+      } else {
+        input.value = '';
+      }
+    });
+
+    const selects = document.querySelectorAll('.form-body select');
+    selects.forEach(select => {
+      select.selectedIndex = 0;
+    });
+
+    this.lastGeneratedPayload = '';
+    this.updateQR(false);
+  }
+
   initTypeSelector() {
     const typeButtons = document.querySelectorAll('#qr-type-selector .type-btn');
     typeButtons.forEach(btn => {
@@ -82,6 +102,15 @@ class QRGenerator {
         this.updateQR(false);
       });
     });
+
+    const btnClearForm = document.getElementById('btn-clear-generator-form');
+    if (btnClearForm) {
+      btnClearForm.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.clearForm();
+        if (window.showToast) window.showToast('Form cleared for new QR generation', 'info');
+      });
+    }
   }
 
   initFormInputs() {
@@ -262,8 +291,10 @@ class QRGenerator {
 
   saveCurrentQRToHistory() {
     const payload = this.buildPayload();
-    if (window.historyManager && payload && payload.trim()) {
-      window.historyManager.addRecord('generated', this.currentType.toUpperCase(), payload.trim());
+    if (payload && payload.trim()) {
+      if (window.historyManager) {
+        window.historyManager.addRecord('generated', this.currentType.toUpperCase(), payload.trim());
+      }
     }
   }
 

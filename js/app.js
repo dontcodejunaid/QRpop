@@ -427,7 +427,11 @@ function initNavigation() {
       }
 
       if (targetId === 'history' && window.historyManager) {
-        window.historyManager.render();
+        if (window.historyManager.currentUser) {
+          window.historyManager.fetchCloudRecords();
+        } else {
+          window.historyManager.render();
+        }
       }
     });
   });

@@ -37,7 +37,7 @@ const User = mongoose.model('User', UserSchema);
 // History Record Schema
 const HistorySchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-  type: { type: String, enum: ['generated', 'scanned'], required: true },
+  type: { type: String, required: true },
   category: { type: String, default: 'Text' },
   content: { type: String, required: true },
   timestamp: { type: Date, default: Date.now }
@@ -197,20 +197,32 @@ app.get('/api/history', authenticateToken, async (req, res) => {
 // Add History Record
 app.post('/api/history', authenticateToken, async (req, res) => {
   try {
-    const { type, category, content } = req.body;
+    let { type, category, content } = req.body;
     if (!content || !content.trim()) {
       return res.status(400).json({ success: false, message: 'Content is required.' });
     }
 
-    // Check duplicate recent record
+    type = (type || 'generated').toLowerCase();
+
+    // Check duplicate recent record within last 10 seconds
     const latest = await History.findOne({ userId: req.user.id }).sort({ timestamp: -1 });
-    if (latest && latest.content === content && latest.type === type) {
-      return res.json({ success: true, record: latest });
+    if (latest && latest.content === content.trim() && latest.type === type) {
+      return res.json({ 
+        success: true, 
+        record: {
+          id: latest._id.toString(),
+          userId: latest.userId.toString(),
+          type: latest.type,
+          category: latest.category,
+          content: latest.content,
+          timestamp: latest.timestamp.toISOString()
+        }
+      });
     }
 
     const record = new History({
       userId: req.user.id,
-      type: type || 'generated',
+      type: type,
       category: category || 'Text',
       content: content.trim()
     });

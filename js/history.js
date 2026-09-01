@@ -79,6 +79,9 @@ class HistoryManager {
   async addRecord(type, category, content) {
     if (!content || !content.trim()) return;
 
+    // Only store history if user is authenticated
+    if (!this.currentUser) return;
+
     // Check duplicate recent local entry
     if (this.records.length > 0 && this.records[0].content === content && this.records[0].type === type) {
       return;
@@ -92,31 +95,28 @@ class HistoryManager {
       timestamp: new Date().toISOString()
     };
 
-    // Save in memory immediately
+    // Save in memory for current user session immediately
     this.records.unshift(localRecord);
     if (this.records.length > 50) this.records.pop();
     this.render();
 
-    // If logged in, sync to MongoDB Atlas
-    if (this.currentUser) {
-      try {
-        const res = await fetch(`${API_BASE}/history`, {
-          method: 'POST',
-          headers: this.getHeaders(),
-          body: JSON.stringify({
-            type: type || 'generated',
-            category: category || 'Text',
-            content: content.trim()
-          })
-        });
-        const data = await res.json();
-        if (data.success && data.record) {
-          // Update id from server
-          localRecord.id = data.record.id || localRecord.id;
-        }
-      } catch (e) {
-        console.warn('Cloud sync error:', e);
+    // Sync to MongoDB Atlas under current authenticated user ID
+    try {
+      const res = await fetch(`${API_BASE}/history`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({
+          type: type || 'generated',
+          category: category || 'Text',
+          content: content.trim()
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.record) {
+        localRecord.id = data.record.id || localRecord.id;
       }
+    } catch (e) {
+      console.warn('Cloud sync error:', e);
     }
   }
 
