@@ -6,16 +6,16 @@
   <title>QRpop - Fast & Modern QR Generator & Scanner</title>
   <meta name="description" content="A fast, responsive web application to generate customizable QR codes and scan QR codes with live camera or image upload.">
   
-  <!-- Google Fonts: Inter & Outfit -->
+  <!-- Google Fonts: Studio Ghibli Inspired (Quicksand, Nunito, Outfit) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Outfit:wght@600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
   
   <!-- FontAwesome for clean modern icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=75">
+  <link rel="stylesheet" href="css/style.css?v=130">
 
   <!-- External CDNs for QR generation & scanning -->
   <!-- qr-code-styling for high-quality, custom styled Canvas/SVG QR generation -->
@@ -120,7 +120,7 @@
     <!-- ==================== HOME SECTION ==================== -->
     <section class="tab-content active" id="section-home">
       <div class="home-hero-container">
-        <div class="home-hero-card glass-panel">
+        <div class="home-hero-card">
           <h1 class="hero-title">Create, Customize & Scan <span>QR Codes</span> in Real-Time</h1>
           <p class="hero-subtitle">
             QRpop provides a lightning-fast suite to generate formatted QR codes for links, Wi-Fi, contacts, and text, or scan codes instantly via live camera & image files.
@@ -128,7 +128,7 @@
 
           <!-- Quick Action Cards -->
           <div class="home-cards-grid">
-            <div class="home-action-card glass-panel" id="home-card-generate">
+            <div class="home-action-card" id="home-card-generate">
               <div class="home-card-icon">
                 <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u2728.png" alt="Generate" class="noto-3d-card-icon">
               </div>
@@ -140,7 +140,7 @@
               </button>
             </div>
 
-            <div class="home-action-card glass-panel" id="home-card-scan">
+            <div class="home-action-card" id="home-card-scan">
               <div class="home-card-icon">
                 <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f4f8.png" alt="Scan" class="noto-3d-card-icon">
               </div>
@@ -336,8 +336,8 @@
               <div class="custom-item">
                 <label>Foreground Color</label>
                 <div class="color-picker-wrap">
-                  <input type="color" id="qr-fg-color" value="#0f172a">
-                  <span id="fg-color-hex">#0f172a</span>
+                  <input type="color" id="qr-fg-color" value="#000000">
+                  <span id="fg-color-hex">#000000</span>
                 </div>
               </div>
               <div class="custom-item">
@@ -366,15 +366,15 @@
               </div>
             </div>
 
-            <!-- Color Palette Presets -->
+            <!-- Color Palette Presets (Studio Ghibli & Classic Editions) -->
             <div class="preset-palettes">
-              <span class="preset-label">Quick Themes:</span>
-              <button class="palette-chip active" data-fg="#5c72e8" data-bg="#ffffff" style="--chip-fg:#5c72e8; --chip-bg:#ffffff;" title="Royal Blue"></button>
-              <button class="palette-chip" data-fg="#1e293b" data-bg="#ffffff" style="--chip-fg:#1e293b; --chip-bg:#ffffff;" title="Classic Slate"></button>
-              <button class="palette-chip" data-fg="#4338ca" data-bg="#f0f4ff" style="--chip-fg:#4338ca; --chip-bg:#f0f4ff;" title="Indigo Blue"></button>
-              <button class="palette-chip" data-fg="#0284c7" data-bg="#ffffff" style="--chip-fg:#0284c7; --chip-bg:#ffffff;" title="Sky Blue"></button>
-              <button class="palette-chip" data-fg="#4f46e5" data-bg="#ffffff" style="--chip-fg:#4f46e5; --chip-bg:#ffffff;" title="Electric Indigo"></button>
-              <button class="palette-chip" data-fg="#f8fafc" data-bg="#0f172a" style="--chip-fg:#f8fafc; --chip-bg:#0f172a;" title="Midnight Blue"></button>
+              <span class="preset-label">Themes:</span>
+              <button class="palette-chip active" data-fg="#000000" data-bg="#ffffff" style="--chip-fg:#000000; --chip-bg:#ffffff;" title="Classic Black"></button>
+              <button class="palette-chip" data-fg="#4b8b68" data-bg="#fffdfa" style="--chip-fg:#4b8b68; --chip-bg:#fffdfa;" title="Totoro Forest"></button>
+              <button class="palette-chip" data-fg="#3b7280" data-bg="#fffdfa" style="--chip-fg:#3b7280; --chip-bg:#fffdfa;" title="Laputa Sky"></button>
+              <button class="palette-chip" data-fg="#b85d38" data-bg="#fffdfa" style="--chip-fg:#b85d38; --chip-bg:#fffdfa;" title="Howl's Sunset"></button>
+              <button class="palette-chip" data-fg="#6d547b" data-bg="#fdfaf4" style="--chip-fg:#6d547b; --chip-bg:#fdfaf4;" title="Spirited Twilight"></button>
+              <button class="palette-chip" data-fg="#304337" data-bg="#e8ede8" style="--chip-fg:#304337; --chip-bg:#e8ede8;" title="Mononoke Deep Pine"></button>
             </div>
           </div>
         </div>
@@ -734,10 +734,10 @@
   <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
   <!-- JavaScript Modules -->
-  <script src="js/auth.js?v=20"></script>
-  <script src="js/history.js?v=20"></script>
-  <script src="js/generator.js?v=20"></script>
-  <script src="js/scanner.js?v=20"></script>
-  <script src="js/app.js?v=20"></script>
+  <script src="js/auth.js?v=85"></script>
+  <script src="js/history.js?v=85"></script>
+  <script src="js/generator.js?v=85"></script>
+  <script src="js/scanner.js?v=85"></script>
+  <script src="js/app.js?v=85"></script>
 </body>
 </html>

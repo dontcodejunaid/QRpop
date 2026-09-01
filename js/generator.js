@@ -15,7 +15,7 @@ class QRGenerator {
       type: 'svg',
       data: 'Welcome to QRpop!',
       dotsOptions: {
-        color: '#0f172a',
+        color: '#000000',
         type: 'square'
       },
       backgroundOptions: {
@@ -23,18 +23,20 @@ class QRGenerator {
       },
       cornersSquareOptions: {
         type: 'square',
-        color: '#0f172a'
+        color: '#000000'
       },
       cornersDotOptions: {
         type: 'square',
-        color: '#0f172a'
+        color: '#000000'
       }
     };
-
-    this.init();
+    this.initialized = false;
   }
 
   init() {
+    if (this.initialized) return;
+    this.initialized = true;
+
     this.initTypeSelector();
     this.initFormInputs();
     this.initCustomizations();
@@ -45,12 +47,20 @@ class QRGenerator {
       this.qrCodeInstance = new QRCodeStyling(this.options);
       const container = document.getElementById('qr-output');
       if (container) {
+        container.innerHTML = '';
         this.qrCodeInstance.append(container);
       }
     }
 
     // Trigger initial generation
     this.updateQR(false);
+  }
+
+  saveCurrentQRToHistory() {
+    const payload = this.buildPayload();
+    if (window.historyManager && payload && payload.trim()) {
+      window.historyManager.addRecord('generated', this.currentType.toUpperCase(), payload.trim());
+    }
   }
 
   initTypeSelector() {
@@ -152,27 +162,39 @@ class QRGenerator {
     const btnShareQr = document.getElementById('btn-share-qr');
 
     if (btnDownloadPng) {
-      btnDownloadPng.addEventListener('click', () => this.downloadQR('png'));
+      btnDownloadPng.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.downloadQR('png');
+      });
     }
 
     if (btnDownloadSvg) {
-      btnDownloadSvg.addEventListener('click', () => this.downloadQR('svg'));
+      btnDownloadSvg.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.downloadQR('svg');
+      });
     }
 
     if (btnCopyQr) {
-      btnCopyQr.addEventListener('click', () => this.copyQRImage());
+      btnCopyQr.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.copyQRImage();
+      });
     }
 
     if (btnShareQr) {
-      btnShareQr.addEventListener('click', () => this.shareQR());
+      btnShareQr.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.shareQR();
+      });
     }
   }
 
   debouncedUpdate() {
     clearTimeout(this.debounceTimer);
     this.debounceTimer = setTimeout(() => {
-      this.updateQR(false);
-    }, 180);
+      this.updateQR(true);
+    }, 400);
   }
 
   buildPayload() {

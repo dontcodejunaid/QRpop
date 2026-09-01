@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.historyManager) {
     window.historyManager.render();
   }
+  if (window.qrGenerator) {
+    window.qrGenerator.init();
+  }
 });
 
 /**
@@ -477,7 +480,18 @@ function initNavigation() {
  * Global Toast Notification System
  */
 function initToastNotification() {
+  let lastToastMsg = '';
+  let lastToastTime = 0;
+
   window.showToast = function(message, type = 'info') {
+    const now = Date.now();
+    // Suppress exact duplicate toasts within 800ms
+    if (message === lastToastMsg && now - lastToastTime < 800) {
+      return;
+    }
+    lastToastMsg = message;
+    lastToastTime = now;
+
     const container = document.getElementById('toast-container');
     if (!container) return;
 

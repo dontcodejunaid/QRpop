@@ -5,14 +5,47 @@
 
 const API_BASE = '/api';
 
+const STORAGE_KEY = 'qrpop_local_history';
+
 class HistoryManager {
   constructor() {
     this.currentUser = null;
-    this.records = [];
+    this.records = this.loadLocalRecords();
     this.currentFilter = 'all';
     this.isLoading = false;
     this.initEventListeners();
     this.initAuthSubscription();
+  }
+
+  loadLocalRecords() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      let list = data ? JSON.parse(data) : [];
+      if (Array.isArray(list) && list.length > 0) {
+        return list;
+      }
+    } catch (e) {}
+
+    // Initial default record if storage is empty
+    const defaultList = [{
+      id: 'rec_' + Date.now(),
+      type: 'generated',
+      category: 'Text',
+      content: 'Welcome to QRpop!',
+      timestamp: new Date().toISOString()
+    }];
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultList));
+    } catch (e) {}
+    return defaultList;
+  }
+
+  saveLocalRecords() {
+    try {
+      if (Array.isArray(this.records)) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.records.slice(0, 50)));
+      }
+    } catch (e) {}
   }
 
   initAuthSubscription() {
@@ -20,9 +53,9 @@ class HistoryManager {
       window.authManager.onAuthStateChanged((user) => {
         this.currentUser = user;
         if (user) {
-          this.fetchRecords();
+          this.fetchCloudRecords();
         } else {
-          this.records = [];
+          this.records = this.loadLocalRecords();
           this.render();
         }
       });
@@ -38,19 +71,22 @@ class HistoryManager {
     return headers;
   }
 
-  async fetchRecords() {
+  async fetchCloudRecords() {
     if (!this.currentUser) return;
     this.isLoading = true;
     try {
       const res = await fetch(`${API_BASE}/history`, {
         headers: this.getHeaders()
       });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.records)) {
-        this.records = data.records;
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.records)) {
+          this.records = data.records;
+          this.saveLocalRecords();
+        }
       }
     } catch (e) {
-      console.error('Failed to fetch history from MongoDB Atlas', e);
+      console.warn('Using local history cache:', e);
     } finally {
       this.isLoading = false;
       this.render();
@@ -60,76 +96,80 @@ class HistoryManager {
   async addRecord(type, category, content) {
     if (!content || !content.trim()) return;
 
-    if (!this.currentUser) {
-      if (window.showToast) {
-        window.showToast('Please sign in to save activity to your History', 'info');
-      }
-      return;
-    }
-
     // Check duplicate recent local entry
     if (this.records.length > 0 && this.records[0].content === content && this.records[0].type === type) {
       return;
     }
 
-    try {
-      const res = await fetch(`${API_BASE}/history`, {
-        method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify({
-          type: type || 'generated',
-          category: category || 'Text',
-          content: content.trim()
-        })
-      });
+    const localRecord = {
+      id: 'rec_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      type: type || 'generated',
+      category: category || 'Text',
+      content: content.trim(),
+      timestamp: new Date().toISOString()
+    };
 
-      const data = await res.json();
-      if (data.success && data.record) {
-        this.records.unshift(data.record);
-        if (this.records.length > 50) this.records.pop();
-        this.render();
+    // Save locally immediately
+    this.records.unshift(localRecord);
+    if (this.records.length > 50) this.records.pop();
+    this.saveLocalRecords();
+    this.render();
+
+    // If logged in, sync to MongoDB Atlas
+    if (this.currentUser) {
+      try {
+        const res = await fetch(`${API_BASE}/history`, {
+          method: 'POST',
+          headers: this.getHeaders(),
+          body: JSON.stringify({
+            type: type || 'generated',
+            category: category || 'Text',
+            content: content.trim()
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.record) {
+          // Update id from server
+          localRecord.id = data.record.id || localRecord.id;
+          this.saveLocalRecords();
+        }
+      } catch (e) {
+        console.warn('Cloud sync error, saved locally:', e);
       }
-    } catch (e) {
-      console.error('Failed to add record to MongoDB Atlas', e);
     }
   }
 
   async deleteRecord(id) {
-    if (!this.currentUser) return;
+    this.records = this.records.filter(r => r.id !== id);
+    this.saveLocalRecords();
+    this.render();
+    if (window.showToast) window.showToast('Record removed', 'info');
 
-    try {
-      const res = await fetch(`${API_BASE}/history/${id}`, {
-        method: 'DELETE',
-        headers: this.getHeaders()
-      });
-      const data = await res.json();
-      if (data.success) {
-        this.records = this.records.filter(r => r.id !== id);
-        this.render();
-        if (window.showToast) window.showToast('Record deleted', 'info');
-      }
-    } catch (e) {
-      console.error('Failed to delete history record', e);
+    if (this.currentUser) {
+      try {
+        await fetch(`${API_BASE}/history/${id}`, {
+          method: 'DELETE',
+          headers: this.getHeaders()
+        });
+      } catch (e) {}
     }
   }
 
   async clearAll() {
-    if (!this.currentUser) return;
     if (this.records.length === 0) return;
-    if (confirm('Are you sure you want to clear your history?')) {
-      try {
-        const res = await fetch(`${API_BASE}/history`, {
-          method: 'DELETE',
-          headers: this.getHeaders()
-        });
-        const data = await res.json();
-        if (data.success) {
-          this.records = [];
-          this.render();
-          if (window.showToast) window.showToast('History cleared', 'info');
-        }
-      } catch (e) {
-        console.error('Failed to clear history in MongoDB Atlas', e);
+    if (confirm('Are you sure you want to clear your activity history?')) {
+      this.records = [];
+      this.saveLocalRecords();
+      this.render();
+      if (window.showToast) window.showToast('History cleared', 'info');
+
+      if (this.currentUser) {
+        try {
+          await fetch(`${API_BASE}/history`, {
+            method: 'DELETE',
+            headers: this.getHeaders()
+          });
+        } catch (e) {}
       }
     }
   }
@@ -140,9 +180,12 @@ class HistoryManager {
   }
 
   updateCounts() {
-    const allCount = this.currentUser ? this.records.length : 0;
-    const genCount = this.currentUser ? this.records.filter(r => r.type === 'generated').length : 0;
-    const scanCount = this.currentUser ? this.records.filter(r => r.type === 'scanned').length : 0;
+    if (!this.records || this.records.length === 0) {
+      this.records = this.loadLocalRecords();
+    }
+    const allCount = this.records.length;
+    const genCount = this.records.filter(r => r.type === 'generated').length;
+    const scanCount = this.records.filter(r => r.type === 'scanned').length;
 
     const elAll = document.getElementById('count-all');
     const elGen = document.getElementById('count-generated');
@@ -167,39 +210,13 @@ class HistoryManager {
   }
 
   render() {
+    if (!this.records || this.records.length === 0) {
+      this.records = this.loadLocalRecords();
+    }
     this.updateCounts();
     const listEl = document.getElementById('history-list');
     const clearBtn = document.getElementById('btn-clear-history');
     if (!listEl) return;
-
-    // If no user is logged in, show Auth Gate state
-    if (!this.currentUser) {
-      if (clearBtn) clearBtn.style.display = 'none';
-      listEl.innerHTML = `
-        <div class="auth-gate-state">
-          <div class="auth-gate-icon">
-            <i class="fa-solid fa-lock"></i>
-          </div>
-          <h3>Sign in to View Your History</h3>
-          <p>Your generated and scanned QR codes are stored securely in your private cloud account on MongoDB Atlas. Log in or create a free account to track your QR history.</p>
-          <button class="btn btn-primary btn-lg" id="btn-history-signin">
-            <i class="fa-solid fa-right-to-bracket"></i> Sign In / Sign Up
-          </button>
-        </div>
-      `;
-
-      const gateSignInBtn = document.getElementById('btn-history-signin');
-      if (gateSignInBtn) {
-        gateSignInBtn.addEventListener('click', () => {
-          if (window.openAuthModal) {
-            window.openAuthModal('login');
-          }
-        });
-      }
-      return;
-    }
-
-    if (clearBtn) clearBtn.style.display = 'inline-flex';
 
     if (this.isLoading) {
       listEl.innerHTML = `
@@ -217,11 +234,14 @@ class HistoryManager {
       listEl.innerHTML = `
         <div class="empty-state">
           <i class="fa-regular fa-folder-open"></i>
-          <p>No activity records found for this view.</p>
+          <p>No activity records found. Generated and scanned QR codes will appear here!</p>
         </div>
       `;
+      if (clearBtn) clearBtn.style.display = 'none';
       return;
     }
+
+    if (clearBtn) clearBtn.style.display = 'inline-flex';
 
     listEl.innerHTML = filtered.map(rec => {
       const isGen = rec.type === 'generated';
@@ -248,20 +268,20 @@ class HistoryManager {
               <i class="fa-regular fa-copy"></i>
             </button>
             <button class="btn btn-outline btn-sm delete-hist-btn" data-id="${rec.id}" title="Delete Record">
-              <i class="fa-regular fa-trash-can"></i>
+              <i class="fa-solid fa-trash-can"></i>
             </button>
           </div>
         </div>
       `;
     }).join('');
 
-    // Attach click listeners to cards
+    // Attach copy & delete listeners
     listEl.querySelectorAll('.copy-hist-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const content = btn.getAttribute('data-content');
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(content).then(() => {
+        const text = btn.getAttribute('data-content');
+        if (text && navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
             if (window.showToast) window.showToast('Copied to clipboard!', 'success');
           });
         }
@@ -272,7 +292,9 @@ class HistoryManager {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = btn.getAttribute('data-id');
-        this.deleteRecord(id);
+        if (id) {
+          this.deleteRecord(id);
+        }
       });
     });
   }
@@ -290,19 +312,34 @@ class HistoryManager {
   initEventListeners() {
     const clearBtn = document.getElementById('btn-clear-history');
     if (clearBtn) {
-      clearBtn.addEventListener('click', () => this.clearAll());
+      clearBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.clearAll();
+      });
     }
 
     const filterChips = document.querySelectorAll('.history-filter-bar .filter-chip');
     filterChips.forEach(chip => {
-      chip.addEventListener('click', () => {
+      chip.addEventListener('click', (e) => {
+        e.preventDefault();
         filterChips.forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
-        this.currentFilter = chip.getAttribute('data-filter');
+        this.currentFilter = chip.getAttribute('data-filter') || 'all';
         this.render();
       });
     });
   }
 }
 
+// Instantiate immediately and render when DOM is ready
 window.historyManager = new HistoryManager();
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.historyManager.initEventListeners();
+    window.historyManager.render();
+  });
+} else {
+  window.historyManager.initEventListeners();
+  window.historyManager.render();
+}
