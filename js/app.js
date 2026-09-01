@@ -126,6 +126,9 @@ function initAuthUI() {
       if (result.success) {
         if (window.showToast) window.showToast(result.message, 'success');
         window.closeAuthModal();
+        if (window.historyManager) {
+          window.historyManager.fetchCloudRecords();
+        }
         // Clear fields
         if (document.getElementById('login-password')) document.getElementById('login-password').value = '';
       } else {
@@ -271,6 +274,9 @@ function initAuthUI() {
       if (result.success) {
         if (window.showToast) window.showToast(result.message, 'success');
         window.closeAuthModal();
+        if (window.historyManager) {
+          window.historyManager.fetchCloudRecords();
+        }
         // Clear fields
         if (document.getElementById('signup-name')) document.getElementById('signup-name').value = '';
         if (document.getElementById('signup-email')) document.getElementById('signup-email').value = '';
@@ -427,7 +433,7 @@ function initNavigation() {
       }
 
       if (targetId === 'history' && window.historyManager) {
-        if (window.historyManager.currentUser) {
+        if (window.authManager?.getToken() || window.historyManager.currentUser) {
           window.historyManager.fetchCloudRecords();
         } else {
           window.historyManager.render();

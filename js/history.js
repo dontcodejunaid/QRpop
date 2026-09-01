@@ -3,18 +3,20 @@
  * Stores generated and scanned items directly in MongoDB Atlas via Backend API.
  */
 
-const API_BASE = '/api';
-
-const STORAGE_KEY = 'qrpop_local_history';
+var QRPOP_API_BASE = window.QRPOP_API_BASE || '/api';
+window.QRPOP_API_BASE = QRPOP_API_BASE;
 
 class HistoryManager {
   constructor() {
-    this.currentUser = null;
+    this.currentUser = window.authManager?.loadCurrentSession?.() || null;
     this.records = [];
     this.currentFilter = 'all';
     this.isLoading = false;
     this.initEventListeners();
     this.initAuthSubscription();
+    if (this.currentUser || window.authManager?.getToken()) {
+      this.fetchCloudRecords();
+    }
   }
 
   updateSubtitle() {
@@ -36,7 +38,6 @@ class HistoryManager {
         
         // When switching users or logging out, clear and reload user-specific records
         if (user) {
-          this.records = [];
           this.fetchCloudRecords();
         } else {
           this.records = [];
@@ -56,10 +57,11 @@ class HistoryManager {
   }
 
   async fetchCloudRecords() {
-    if (!this.currentUser) return;
+    const token = window.authManager?.getToken();
+    if (!token && !this.currentUser) return;
     this.isLoading = true;
     try {
-      const res = await fetch(`${API_BASE}/history`, {
+      const res = await fetch(`${QRPOP_API_BASE}/history`, {
         headers: this.getHeaders()
       });
       if (res.ok) {
@@ -79,11 +81,10 @@ class HistoryManager {
   async addRecord(type, category, content) {
     if (!content || !content.trim()) return;
 
-    // Only store history if user is authenticated
-    if (!this.currentUser) return;
+    const trimmedContent = content.trim();
 
     // Check duplicate recent local entry
-    if (this.records.length > 0 && this.records[0].content === content && this.records[0].type === type) {
+    if (this.records.length > 0 && this.records[0].content === trimmedContent && this.records[0].type === type) {
       return;
     }
 
@@ -91,32 +92,35 @@ class HistoryManager {
       id: 'rec_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       type: type || 'generated',
       category: category || 'Text',
-      content: content.trim(),
+      content: trimmedContent,
       timestamp: new Date().toISOString()
     };
 
-    // Save in memory for current user session immediately
+    // Save in memory immediately so UI reflects instantly
     this.records.unshift(localRecord);
     if (this.records.length > 50) this.records.pop();
     this.render();
 
     // Sync to MongoDB Atlas under current authenticated user ID
-    try {
-      const res = await fetch(`${API_BASE}/history`, {
-        method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify({
-          type: type || 'generated',
-          category: category || 'Text',
-          content: content.trim()
-        })
-      });
-      const data = await res.json();
-      if (data.success && data.record) {
-        localRecord.id = data.record.id || localRecord.id;
+    const token = window.authManager?.getToken();
+    if (token) {
+      try {
+        const res = await fetch(`${QRPOP_API_BASE}/history`, {
+          method: 'POST',
+          headers: this.getHeaders(),
+          body: JSON.stringify({
+            type: type || 'generated',
+            category: category || 'Text',
+            content: trimmedContent
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.record) {
+          localRecord.id = data.record.id || localRecord.id;
+        }
+      } catch (e) {
+        console.warn('Cloud sync error:', e);
       }
-    } catch (e) {
-      console.warn('Cloud sync error:', e);
     }
   }
 
@@ -127,7 +131,7 @@ class HistoryManager {
 
     if (this.currentUser) {
       try {
-        await fetch(`${API_BASE}/history/${id}`, {
+        await fetch(`${QRPOP_API_BASE}/history/${id}`, {
           method: 'DELETE',
           headers: this.getHeaders()
         });
@@ -144,7 +148,7 @@ class HistoryManager {
 
       if (this.currentUser) {
         try {
-          await fetch(`${API_BASE}/history`, {
+          await fetch(`${QRPOP_API_BASE}/history`, {
             method: 'DELETE',
             headers: this.getHeaders()
           });
@@ -159,12 +163,10 @@ class HistoryManager {
   }
 
   updateCounts() {
-    if (!this.currentUser) {
-      this.records = [];
-    }
-    const allCount = this.records ? this.records.length : 0;
-    const genCount = this.records ? this.records.filter(r => r.type === 'generated').length : 0;
-    const scanCount = this.records ? this.records.filter(r => r.type === 'scanned').length : 0;
+    const list = this.records || [];
+    const allCount = list.length;
+    const genCount = list.filter(r => r.type === 'generated').length;
+    const scanCount = list.filter(r => r.type === 'scanned').length;
 
     const elAll = document.getElementById('count-all');
     const elGen = document.getElementById('count-generated');
@@ -240,7 +242,8 @@ class HistoryManager {
 
     const filtered = this.getFilteredRecords();
 
-    if (!this.currentUser) {
+    const user = this.currentUser || window.authManager?.getCurrentUser() || window.authManager?.loadCurrentSession?.();
+    if (!user) {
       listEl.innerHTML = `
         <div class="empty-state">
           <i class="fa-solid fa-user-lock"></i>

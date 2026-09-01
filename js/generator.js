@@ -212,8 +212,8 @@ class QRGenerator {
   debouncedUpdate() {
     clearTimeout(this.debounceTimer);
     this.debounceTimer = setTimeout(() => {
-      this.updateQR(true);
-    }, 400);
+      this.updateQR(false);
+    }, 250);
   }
 
   buildPayload() {

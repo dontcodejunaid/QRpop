@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=130">
+  <link rel="stylesheet" href="css/style.css?v=165">
 
   <!-- External CDNs for QR generation & scanning -->
   <!-- qr-code-styling for high-quality, custom styled Canvas/SVG QR generation -->
@@ -574,10 +574,10 @@
           </div>
         </div>
 
-        <div class="about-grid">
+        <div class="about-clean-flow">
           <!-- Guide: Generating QR Codes -->
-          <div class="about-card glass-panel">
-            <div class="about-card-header">
+          <div class="about-clean-block">
+            <div class="about-clean-header">
               <div class="about-icon-badge">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
               </div>
@@ -586,19 +586,19 @@
                 <span>Step-by-step creation & format guide</span>
               </div>
             </div>
-            <div class="about-card-body">
-              <ul class="guide-steps">
-                <li><strong>1. Select Content Type:</strong> Choose from Plain Text, URLs, Wi-Fi networks, Contact vCards, Phone numbers, or Emails.</li>
-                <li><strong>2. Enter Information:</strong> Fill in the required fields. The live QR preview updates in real-time.</li>
-                <li><strong>3. Customize Appearance:</strong> Adjust foreground & background colors, pick a quick theme, or choose smooth rounded/dotted corner shapes.</li>
-                <li><strong>4. Download or Share:</strong> Export high-resolution PNG or vector SVG files, or copy directly to your clipboard.</li>
-              </ul>
-            </div>
+            <ul class="guide-steps">
+              <li><strong>1. Select Content Type:</strong> Choose from Plain Text, URLs, Wi-Fi networks, Contact vCards, Phone numbers, or Emails.</li>
+              <li><strong>2. Enter Information:</strong> Fill in the required fields. The live QR preview updates in real-time.</li>
+              <li><strong>3. Customize Appearance:</strong> Adjust foreground & background colors, pick a quick theme, or choose smooth rounded/dotted corner shapes.</li>
+              <li><strong>4. Download or Share:</strong> Export high-resolution PNG or vector SVG files, or copy directly to your clipboard.</li>
+            </ul>
           </div>
 
+          <div class="about-clean-divider"></div>
+
           <!-- Guide: Scanning QR Codes -->
-          <div class="about-card glass-panel">
-            <div class="about-card-header">
+          <div class="about-clean-block">
+            <div class="about-clean-header">
               <div class="about-icon-badge">
                 <i class="fa-solid fa-camera"></i>
               </div>
@@ -607,26 +607,26 @@
                 <span>Camera feed & image upload decoding</span>
               </div>
             </div>
-            <div class="about-card-body">
-              <ul class="guide-steps">
-                <li><strong>Live Camera Feed:</strong> Switch to the Scan tab to automatically request camera permission. Hold the QR code within view for instant detection.</li>
-                <li><strong>Image File Upload:</strong> Drag & drop or select PNG, JPG, or SVG image files stored on your device.</li>
-                <li><strong>Smart Payload Actions:</strong> Automatically recognizes links (Open Link), phone numbers (Call), emails (Compose), Wi-Fi passwords, and contact cards.</li>
-                <li><strong>Scan Again:</strong> Pause after detection and tap "Scan Again" anytime to scan another code.</li>
-              </ul>
-            </div>
+            <ul class="guide-steps">
+              <li><strong>Live Camera Feed:</strong> Switch to the Scan tab to automatically request camera permission. Hold the QR code within view for instant detection.</li>
+              <li><strong>Image File Upload:</strong> Drag & drop or select PNG, JPG, or SVG image files stored on your device.</li>
+              <li><strong>Smart Payload Actions:</strong> Automatically recognizes links (Open Link), phone numbers (Call), emails (Compose), Wi-Fi passwords, and contact cards.</li>
+              <li><strong>Scan Again:</strong> Pause after detection and tap "Scan Again" anytime to scan another code.</li>
+            </ul>
           </div>
-        </div>
 
-        <!-- FAQ Accordion / Privacy & Architecture Guarantee -->
-        <div class="about-faq-section">
-          <h3 class="sub-header"><i class="fa-solid fa-shield-halved"></i> Privacy, Security & Cloud Architecture</h3>
-          <p class="about-privacy-text" style="margin-bottom: 0.75rem;">
-            <strong>Client-Side Processing:</strong> QR rendering, customization previews, camera feeds, and uploaded image scans are processed locally in your browser with zero latency.
-          </p>
-          <p class="about-privacy-text">
-            <strong>Secure Account Cloud Sync:</strong> When signed in, your generated and scanned QR history is encrypted and securely stored in MongoDB Atlas via authenticated REST APIs with bcrypt hashing and JWT tokens, keeping each user's history private and isolated.
-          </p>
+          <div class="about-clean-divider"></div>
+
+          <!-- Privacy & Architecture Guarantee -->
+          <div class="about-clean-block">
+            <h3 class="sub-header" style="margin-bottom: 0.75rem;"><i class="fa-solid fa-shield-halved"></i> Privacy, Security & Cloud Architecture</h3>
+            <p class="about-privacy-text" style="margin-bottom: 0.75rem;">
+              <strong>Client-Side Processing:</strong> QR rendering, customization previews, camera feeds, and uploaded image scans are processed locally in your browser with zero latency.
+            </p>
+            <p class="about-privacy-text">
+              <strong>Secure Account Cloud Sync:</strong> When signed in, your generated and scanned QR history is encrypted and securely stored in MongoDB Atlas via authenticated REST APIs with bcrypt hashing and JWT tokens, keeping each user's history private and isolated.
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -748,10 +748,10 @@
   <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
   <!-- JavaScript Modules -->
-  <script src="js/auth.js?v=85"></script>
-  <script src="js/history.js?v=85"></script>
-  <script src="js/generator.js?v=85"></script>
-  <script src="js/scanner.js?v=85"></script>
-  <script src="js/app.js?v=85"></script>
+  <script src="js/auth.js?v=160"></script>
+  <script src="js/history.js?v=160"></script>
+  <script src="js/generator.js?v=160"></script>
+  <script src="js/scanner.js?v=160"></script>
+  <script src="js/app.js?v=160"></script>
 </body>
 </html>
