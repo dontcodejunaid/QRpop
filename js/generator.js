@@ -201,32 +201,37 @@ class QRGenerator {
     switch (this.currentType) {
       case 'text': {
         const text = document.getElementById('input-text')?.value.trim();
-        return text || 'https://github.com/dontcodejunaid/QRpop';
+        return text || '';
       }
       case 'url': {
         let url = document.getElementById('input-url')?.value.trim();
-        if (!url) return 'https://github.com/dontcodejunaid/QRpop';
+        if (!url) return '';
         if (!/^https?:\/\//i.test(url)) {
           url = 'https://' + url;
         }
         return url;
       }
       case 'wifi': {
-        const ssid = document.getElementById('input-wifi-ssid')?.value.trim() || 'MyWiFiNetwork';
+        const ssid = document.getElementById('input-wifi-ssid')?.value.trim();
+        if (!ssid) return '';
         const password = document.getElementById('input-wifi-password')?.value || '';
         const auth = document.getElementById('select-wifi-auth')?.value || 'WPA';
         const hidden = document.getElementById('input-wifi-hidden')?.checked ? 'true' : 'false';
         return `WIFI:S:${ssid};T:${auth};P:${password};H:${hidden};;`;
       }
       case 'vcard': {
-        const fn = document.getElementById('input-vcard-fn')?.value.trim() || 'John';
-        const ln = document.getElementById('input-vcard-ln')?.value.trim() || 'Doe';
+        const fn = document.getElementById('input-vcard-fn')?.value.trim() || '';
+        const ln = document.getElementById('input-vcard-ln')?.value.trim() || '';
         const org = document.getElementById('input-vcard-org')?.value.trim() || '';
         const phone = document.getElementById('input-vcard-phone')?.value.trim() || '';
         const email = document.getElementById('input-vcard-email')?.value.trim() || '';
         const url = document.getElementById('input-vcard-url')?.value.trim() || '';
 
-        let vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${ln};${fn};;;\nFN:${fn} ${ln}`;
+        if (!fn && !ln && !phone && !email) {
+          return '';
+        }
+
+        let vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${ln};${fn};;;\nFN:${(fn + ' ' + ln).trim()}`;
         if (org) vcard += `\nORG:${org}`;
         if (phone) vcard += `\nTEL;TYPE=CELL:${phone}`;
         if (email) vcard += `\nEMAIL:${email}`;
@@ -236,12 +241,13 @@ class QRGenerator {
       }
       case 'phone': {
         const phone = document.getElementById('input-phone')?.value.trim();
-        return phone ? `tel:${phone}` : 'tel:+1234567890';
+        return phone ? `tel:${phone}` : '';
       }
       case 'email': {
-        const to = document.getElementById('input-email-to')?.value.trim() || 'hello@example.com';
+        const to = document.getElementById('input-email-to')?.value.trim() || '';
         const subject = document.getElementById('input-email-subject')?.value.trim() || '';
         const body = document.getElementById('input-email-body')?.value.trim() || '';
+        if (!to && !subject && !body) return '';
         let mailto = `mailto:${to}`;
         const params = [];
         if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
@@ -250,19 +256,36 @@ class QRGenerator {
         return mailto;
       }
       default:
-        return 'QRpop';
+        return '';
     }
   }
 
   saveCurrentQRToHistory() {
     const payload = this.buildPayload();
-    if (window.historyManager && payload) {
-      window.historyManager.addRecord('generated', this.currentType.toUpperCase(), payload);
+    if (window.historyManager && payload && payload.trim()) {
+      window.historyManager.addRecord('generated', this.currentType.toUpperCase(), payload.trim());
     }
   }
 
   updateQR(saveToHist = false) {
     const payload = this.buildPayload();
+    const qrHolder = document.getElementById('qr-output');
+    const placeholder = document.getElementById('qr-preview-placeholder');
+    const previewWrapper = document.getElementById('preview-container');
+
+    if (!payload || !payload.trim()) {
+      // Show empty placeholder
+      if (qrHolder) qrHolder.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'flex';
+      if (previewWrapper) previewWrapper.classList.add('is-empty');
+      return;
+    }
+
+    // Has valid payload -> display QR
+    if (placeholder) placeholder.style.display = 'none';
+    if (qrHolder) qrHolder.style.display = 'block';
+    if (previewWrapper) previewWrapper.classList.remove('is-empty');
+
     this.options.data = payload;
 
     if (this.qrCodeInstance) {
@@ -291,11 +314,15 @@ class QRGenerator {
   }
 
   downloadQR(extension = 'png') {
+    const payload = this.buildPayload();
+    if (!payload || !payload.trim()) {
+      if (window.showToast) window.showToast('Please enter QR content to generate and download.', 'error');
+      return;
+    }
     if (!this.qrCodeInstance) return;
     const res = parseInt(document.getElementById('qr-res-select')?.value || '600', 10);
     
     // Always sync current payload
-    const payload = this.buildPayload();
     this.options.data = payload;
 
     // Ensure the instance has the exact payload and dimension before download
@@ -322,9 +349,13 @@ class QRGenerator {
   }
 
   async copyQRImage() {
+    const payload = this.buildPayload();
+    if (!payload || !payload.trim()) {
+      if (window.showToast) window.showToast('Please enter QR content before copying.', 'error');
+      return;
+    }
     try {
       if (!this.qrCodeInstance) return;
-      const payload = this.buildPayload();
       this.options.data = payload;
       this.qrCodeInstance.update({ data: payload });
 
@@ -352,6 +383,10 @@ class QRGenerator {
 
   async shareQR() {
     const payload = this.buildPayload();
+    if (!payload || !payload.trim()) {
+      if (window.showToast) window.showToast('Please enter QR content before sharing.', 'error');
+      return;
+    }
     this.saveCurrentQRToHistory();
 
     if (navigator.share) {

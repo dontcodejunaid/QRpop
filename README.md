@@ -33,10 +33,9 @@ A modern, fast, responsive QR Code Generator & Scanner web application built wit
   - Automatically recognizes links, Wi-Fi networks, contacts, phone numbers, and emails
   - Dedicated contextual action buttons: **Open URL**, **Copy**, **Share**, and **Scan Again**
 
-### 📜 Local History
-- Automatically records generated & scanned items in browser `localStorage`.
-- Filter by All, Generated, or Scanned.
-- Quick copy and delete operations.
+### 📜 Activity History
+- Automatically records generated & scanned items in user-specific cloud history (MongoDB Atlas).
+- Multi-user data isolation: Sign in to view and persist personal history across sessions.
 
 ---
 

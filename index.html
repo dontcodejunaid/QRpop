@@ -158,8 +158,8 @@
             <div class="feature-item">
               <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f512.png" alt="Private" class="noto-3d-feature-icon">
               <div>
-                <h4>100% Private</h4>
-                <span>Client-side generation with zero data uploads.</span>
+                <h4>Secure & Isolated</h4>
+                <span>Local QR processing with secure MongoDB account sync.</span>
               </div>
             </div>
             <div class="feature-item">
@@ -387,7 +387,16 @@
 
           <div class="preview-canvas-wrapper" id="preview-container">
             <!-- QR code rendered dynamically here -->
-            <div id="qr-output" class="qr-canvas-holder"></div>
+            <div id="qr-output" class="qr-canvas-holder" style="display: none;"></div>
+
+            <!-- Empty / Awaiting Input Placeholder State -->
+            <div id="qr-preview-placeholder" class="qr-preview-placeholder">
+              <div class="placeholder-qr-icon">
+                <i class="fa-solid fa-qrcode"></i>
+              </div>
+              <h4>No QR Generated</h4>
+              <p>Enter data in the form to generate a live QR code preview</p>
+            </div>
           </div>
 
           <div class="preview-actions">
@@ -530,7 +539,7 @@
         <div class="card-header">
           <div>
             <h2><i class="fa-solid fa-clock-rotate-left"></i> Activity History</h2>
-            <p class="sub-text">View your recent generated and scanned QR codes saved locally.</p>
+            <p class="sub-text" id="history-header-subtitle">Your generated and scanned QR codes synced to your account.</p>
           </div>
           <button class="btn btn-outline btn-sm" id="btn-clear-history">
             <i class="fa-solid fa-trash-can"></i> Clear All
@@ -607,11 +616,14 @@
           </div>
         </div>
 
-        <!-- FAQ Accordion / Privacy Guarantee -->
+        <!-- FAQ Accordion / Privacy & Architecture Guarantee -->
         <div class="about-faq-section">
-          <h3 class="sub-header"><i class="fa-solid fa-shield-check"></i> Privacy & Performance Guarantee</h3>
+          <h3 class="sub-header"><i class="fa-solid fa-shield-halved"></i> Privacy, Security & Cloud Architecture</h3>
+          <p class="about-privacy-text" style="margin-bottom: 0.75rem;">
+            <strong>Client-Side Processing:</strong> QR rendering, customization previews, camera feeds, and uploaded image scans are processed locally in your browser with zero latency.
+          </p>
           <p class="about-privacy-text">
-            QRpop is built entirely client-side. Your camera stream, uploaded QR images, Wi-Fi passwords, and contact information are processed directly in your browser without ever being sent to a remote server.
+            <strong>Secure Account Cloud Sync:</strong> When signed in, your generated and scanned QR history is encrypted and securely stored in MongoDB Atlas via authenticated REST APIs with bcrypt hashing and JWT tokens, keeping each user's history private and isolated.
           </p>
         </div>
       </div>

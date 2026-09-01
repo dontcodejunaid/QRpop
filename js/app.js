@@ -374,27 +374,16 @@ function initAuthUI() {
  */
 function initThemeToggle() {
   const toggleCheckbox = document.getElementById('sky-toggle-checkbox');
-  const savedTheme = localStorage.getItem('qrpop_theme') || 'dark';
-
-  if (savedTheme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-    if (toggleCheckbox) toggleCheckbox.checked = false;
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-    if (toggleCheckbox) toggleCheckbox.checked = true;
-  }
 
   if (toggleCheckbox) {
     toggleCheckbox.addEventListener('change', (e) => {
       if (e.target.checked) {
         // Night mode
         document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('qrpop_theme', 'dark');
         if (window.showToast) window.showToast('Night mode enabled', 'info');
       } else {
         // Day mode
         document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('qrpop_theme', 'light');
         if (window.showToast) window.showToast('Day mode enabled', 'info');
       }
     });

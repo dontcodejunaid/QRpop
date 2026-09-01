@@ -10,52 +10,36 @@ const STORAGE_KEY = 'qrpop_local_history';
 class HistoryManager {
   constructor() {
     this.currentUser = null;
-    this.records = this.loadLocalRecords();
+    this.records = [];
     this.currentFilter = 'all';
     this.isLoading = false;
     this.initEventListeners();
     this.initAuthSubscription();
   }
 
-  loadLocalRecords() {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY);
-      let list = data ? JSON.parse(data) : [];
-      if (Array.isArray(list) && list.length > 0) {
-        return list;
+  updateSubtitle() {
+    const sub = document.getElementById('history-header-subtitle');
+    if (sub) {
+      if (this.currentUser) {
+        sub.textContent = `Activity history for ${this.currentUser.name || this.currentUser.email} (MongoDB Atlas).`;
+      } else {
+        sub.textContent = 'Sign in to access and sync your QR activity history.';
       }
-    } catch (e) {}
-
-    // Initial default record if storage is empty
-    const defaultList = [{
-      id: 'rec_' + Date.now(),
-      type: 'generated',
-      category: 'Text',
-      content: 'Welcome to QRpop!',
-      timestamp: new Date().toISOString()
-    }];
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultList));
-    } catch (e) {}
-    return defaultList;
-  }
-
-  saveLocalRecords() {
-    try {
-      if (Array.isArray(this.records)) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.records.slice(0, 50)));
-      }
-    } catch (e) {}
+    }
   }
 
   initAuthSubscription() {
     if (window.authManager) {
       window.authManager.onAuthStateChanged((user) => {
         this.currentUser = user;
+        this.updateSubtitle();
+        
+        // When switching users or logging out, clear and reload user-specific records
         if (user) {
+          this.records = [];
           this.fetchCloudRecords();
         } else {
-          this.records = this.loadLocalRecords();
+          this.records = [];
           this.render();
         }
       });
@@ -82,11 +66,10 @@ class HistoryManager {
         const data = await res.json();
         if (data.success && Array.isArray(data.records)) {
           this.records = data.records;
-          this.saveLocalRecords();
         }
       }
     } catch (e) {
-      console.warn('Using local history cache:', e);
+      console.warn('History fetch error:', e);
     } finally {
       this.isLoading = false;
       this.render();
@@ -109,10 +92,9 @@ class HistoryManager {
       timestamp: new Date().toISOString()
     };
 
-    // Save locally immediately
+    // Save in memory immediately
     this.records.unshift(localRecord);
     if (this.records.length > 50) this.records.pop();
-    this.saveLocalRecords();
     this.render();
 
     // If logged in, sync to MongoDB Atlas
@@ -131,17 +113,15 @@ class HistoryManager {
         if (data.success && data.record) {
           // Update id from server
           localRecord.id = data.record.id || localRecord.id;
-          this.saveLocalRecords();
         }
       } catch (e) {
-        console.warn('Cloud sync error, saved locally:', e);
+        console.warn('Cloud sync error:', e);
       }
     }
   }
 
   async deleteRecord(id) {
     this.records = this.records.filter(r => r.id !== id);
-    this.saveLocalRecords();
     this.render();
     if (window.showToast) window.showToast('Record removed', 'info');
 
@@ -159,7 +139,6 @@ class HistoryManager {
     if (this.records.length === 0) return;
     if (confirm('Are you sure you want to clear your activity history?')) {
       this.records = [];
-      this.saveLocalRecords();
       this.render();
       if (window.showToast) window.showToast('History cleared', 'info');
 
@@ -180,12 +159,12 @@ class HistoryManager {
   }
 
   updateCounts() {
-    if (!this.records || this.records.length === 0) {
-      this.records = this.loadLocalRecords();
+    if (!this.currentUser) {
+      this.records = [];
     }
-    const allCount = this.records.length;
-    const genCount = this.records.filter(r => r.type === 'generated').length;
-    const scanCount = this.records.filter(r => r.type === 'scanned').length;
+    const allCount = this.records ? this.records.length : 0;
+    const genCount = this.records ? this.records.filter(r => r.type === 'generated').length : 0;
+    const scanCount = this.records ? this.records.filter(r => r.type === 'scanned').length : 0;
 
     const elAll = document.getElementById('count-all');
     const elGen = document.getElementById('count-generated');
@@ -197,22 +176,53 @@ class HistoryManager {
   }
 
   formatDate(isoString) {
+    if (!isoString) return '';
     const date = new Date(isoString);
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMins = Math.floor(diffMs / 60000);
+    if (isNaN(date.getTime())) return '';
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    const dateFormatted = date.toLocaleDateString(undefined, { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+    const timeFormatted = date.toLocaleTimeString(undefined, { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+
+    return `${dateFormatted} at ${timeFormatted}`;
+  }
+
+  parseTitle(category, content) {
+    if (!content) return 'QR Code';
+    const clean = content.trim();
+    if (clean.startsWith('WIFI:')) {
+      const match = clean.match(/S:([^;]+)/);
+      return match ? `Wi-Fi: ${match[1]}` : 'Wi-Fi Network';
+    }
+    if (clean.startsWith('BEGIN:VCARD')) {
+      const match = clean.match(/FN:([^\n\r]+)/);
+      return match ? `Contact: ${match[1]}` : 'vCard Contact';
+    }
+    if (clean.startsWith('tel:')) {
+      return `Phone: ${clean.replace('tel:', '')}`;
+    }
+    if (clean.startsWith('mailto:')) {
+      const email = clean.replace('mailto:', '').split('?')[0];
+      return `Email: ${email}`;
+    }
+    if (/^https?:\/\//i.test(clean)) {
+      try {
+        const url = new URL(clean);
+        return `URL: ${url.hostname}${url.pathname.length > 1 ? url.pathname : ''}`;
+      } catch (e) {
+        return `URL: ${clean}`;
+      }
+    }
+    return category && category !== 'TEXT' ? `${category} Content` : 'Text Content';
   }
 
   render() {
-    if (!this.records || this.records.length === 0) {
-      this.records = this.loadLocalRecords();
-    }
     this.updateCounts();
     const listEl = document.getElementById('history-list');
     const clearBtn = document.getElementById('btn-clear-history');
@@ -230,11 +240,29 @@ class HistoryManager {
 
     const filtered = this.getFilteredRecords();
 
+    if (!this.currentUser) {
+      listEl.innerHTML = `
+        <div class="empty-state">
+          <i class="fa-solid fa-user-lock"></i>
+          <p>Please sign in to view and sync your personal QR activity history.</p>
+          <button class="btn btn-primary btn-sm" id="btn-history-signin-cta" style="margin-top: 0.75rem;">
+            <i class="fa-regular fa-user"></i> Sign In to Account
+          </button>
+        </div>
+      `;
+      const signinCta = document.getElementById('btn-history-signin-cta');
+      if (signinCta && window.openAuthModal) {
+        signinCta.addEventListener('click', () => window.openAuthModal('login'));
+      }
+      if (clearBtn) clearBtn.style.display = 'none';
+      return;
+    }
+
     if (filtered.length === 0) {
       listEl.innerHTML = `
         <div class="empty-state">
           <i class="fa-regular fa-folder-open"></i>
-          <p>No activity records found. Generated and scanned QR codes will appear here!</p>
+          <p>No activity records found for your account. Generated and scanned QR codes will appear here!</p>
         </div>
       `;
       if (clearBtn) clearBtn.style.display = 'none';
@@ -248,6 +276,8 @@ class HistoryManager {
       const icon = isGen ? 'fa-wand-magic-sparkles' : 'fa-camera';
       const badgeClass = isGen ? 'type-gen' : 'type-scan';
       const typeLabel = isGen ? 'Generated' : 'Scanned';
+      const categoryLabel = (rec.category || 'Text').toUpperCase();
+      const title = this.parseTitle(rec.category, rec.content);
 
       return `
         <div class="history-card" data-id="${rec.id}">
@@ -258,17 +288,21 @@ class HistoryManager {
             <div class="history-details">
               <div class="history-title-row">
                 <span class="history-type-tag ${badgeClass}">${typeLabel}</span>
-                <span class="history-time">${this.formatDate(rec.timestamp)}</span>
+                <span class="history-category-tag">${this.escapeHtml(categoryLabel)}</span>
+                <span class="history-time"><i class="fa-regular fa-calendar-days" style="margin-right: 3px; font-size: 0.7rem;"></i>${this.formatDate(rec.timestamp)}</span>
               </div>
+              <h4 class="history-item-title">${this.escapeHtml(title)}</h4>
               <div class="history-content-snippet" title="${this.escapeHtml(rec.content)}">${this.escapeHtml(rec.content)}</div>
             </div>
           </div>
           <div class="history-card-actions">
             <button class="btn btn-outline btn-sm copy-hist-btn" data-content="${this.escapeHtml(rec.content)}" title="Copy Content">
               <i class="fa-regular fa-copy"></i>
+              <span>Copy</span>
             </button>
-            <button class="btn btn-outline btn-sm delete-hist-btn" data-id="${rec.id}" title="Delete Record">
+            <button class="btn btn-danger btn-sm delete-hist-btn" data-id="${rec.id}" title="Delete Record">
               <i class="fa-solid fa-trash-can"></i>
+              <span>Delete</span>
             </button>
           </div>
         </div>

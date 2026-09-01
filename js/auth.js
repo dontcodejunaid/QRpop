@@ -10,7 +10,7 @@ const API_BASE = '/api';
 class AuthManager {
   constructor() {
     this.listeners = [];
-    this.token = localStorage.getItem(TOKEN_KEY) || null;
+    this.token = sessionStorage.getItem(TOKEN_KEY) || null;
     this.currentUser = this.loadCurrentSession();
 
     // Verify token validity with backend if token exists
@@ -42,7 +42,7 @@ class AuthManager {
 
   loadCurrentSession() {
     try {
-      const data = localStorage.getItem(CURRENT_USER_KEY);
+      const data = sessionStorage.getItem(CURRENT_USER_KEY);
       return data ? JSON.parse(data) : null;
     } catch (e) {
       return null;
@@ -59,7 +59,7 @@ class AuthManager {
         const data = await res.json();
         if (data.success && data.user) {
           this.currentUser = data.user;
-          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data.user));
+          sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data.user));
           this.notifyListeners();
         }
       } else {
@@ -98,8 +98,8 @@ class AuthManager {
 
       this.token = data.token;
       this.currentUser = data.user;
-      localStorage.setItem(TOKEN_KEY, data.token);
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data.user));
+      sessionStorage.setItem(TOKEN_KEY, data.token);
+      sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data.user));
       this.notifyListeners();
 
       return { success: true, user: data.user, message: data.message };
@@ -128,8 +128,8 @@ class AuthManager {
 
       this.token = data.token;
       this.currentUser = data.user;
-      localStorage.setItem(TOKEN_KEY, data.token);
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data.user));
+      sessionStorage.setItem(TOKEN_KEY, data.token);
+      sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data.user));
       this.notifyListeners();
 
       return { success: true, user: data.user, message: data.message };
@@ -145,8 +145,8 @@ class AuthManager {
   logout() {
     this.token = null;
     this.currentUser = null;
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(CURRENT_USER_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(CURRENT_USER_KEY);
     this.notifyListeners();
     return { success: true, message: 'Logged out successfully.' };
   }
