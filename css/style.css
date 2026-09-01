@@ -1845,8 +1845,103 @@ textarea {
   flex: 1;
 }
 
-.home-action-card .btn {
+.home-action-card .btn,
+.home-action-card .flow-btn {
   width: 100%;
+}
+
+/* Flow Button Component Styling (Faithful shadcn modern button physics) */
+.flow-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  border-radius: 100px;
+  border: 1.5px solid rgba(82, 162, 123, 0.45);
+  background: rgba(82, 162, 123, 0.08);
+  padding: 0.95rem 2.25rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 600ms cubic-bezier(0.23, 1, 0.32, 1);
+  text-decoration: none;
+  isolation: isolate;
+}
+
+.flow-btn:hover {
+  border-color: transparent;
+  color: #ffffff !important;
+  border-radius: 14px;
+}
+
+.flow-btn:active {
+  transform: scale(0.96);
+}
+
+.flow-arrow-left {
+  position: absolute;
+  font-size: 1rem;
+  left: -20%;
+  color: var(--text-primary);
+  z-index: 10;
+  pointer-events: none;
+  transition: all 800ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.flow-btn:hover .flow-arrow-left {
+  left: 1.5rem;
+  color: #ffffff;
+}
+
+.flow-btn-text {
+  position: relative;
+  z-index: 10;
+  transform: translateX(-0.75rem);
+  transition: all 800ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.flow-btn:hover .flow-btn-text {
+  transform: translateX(0.75rem);
+  color: #ffffff;
+}
+
+.flow-btn-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: var(--accent-primary, #52a27b);
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: all 800ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.flow-btn:hover .flow-btn-circle {
+  width: 650px;
+  height: 650px;
+  opacity: 1;
+}
+
+.flow-arrow-right {
+  position: absolute;
+  font-size: 1rem;
+  right: 1.5rem;
+  color: var(--text-primary);
+  z-index: 10;
+  pointer-events: none;
+  transition: all 800ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.flow-btn:hover .flow-arrow-right {
+  right: -20%;
+  color: #ffffff;
 }
 
 .home-features-row {
