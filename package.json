@@ -1,0 +1,33 @@
+{
+  "name": "qrpop",
+  "version": "1.0.0",
+  "description": "A modern, fast, responsive QR Code Generator & Scanner web application built with clean HTML5, CSS3, and JavaScript.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/varalakshmi-ngs/QR-Code-Generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/varalakshmi-ngs/QR-Code-Generator/issues"
+  },
+  "homepage": "https://github.com/varalakshmi-ngs/QR-Code-Generator#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "framer-motion": "^13.1.1",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.38.0",
+    "mongoose": "^9.9.4",
+    "usehooks-ts": "^3.1.1"
+  }
+}

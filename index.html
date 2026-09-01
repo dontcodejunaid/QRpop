@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=19">
+  <link rel="stylesheet" href="css/style.css?v=75">
 
   <!-- External CDNs for QR generation & scanning -->
   <!-- qr-code-styling for high-quality, custom styled Canvas/SVG QR generation -->
@@ -43,63 +43,75 @@
         </div>
       </div>
       
-      <!-- Segmented Navigation Bar -->
+      <!-- Segmented Navigation Bar with Noto 3D Emojis -->
       <nav class="nav-segmented" aria-label="Main Navigation">
-        <button class="nav-tab active" id="tab-btn-home" data-tab="home">
-          <i class="fa-solid fa-house"></i>
+        <button class="nav-tab active" id="tab-btn-home" data-tab="home" title="Home">
+          <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f3e0.png" alt="Home" class="noto-3d-icon">
           <span>Home</span>
         </button>
-        <button class="nav-tab" id="tab-btn-generator" data-tab="generator">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <button class="nav-tab" id="tab-btn-generator" data-tab="generator" title="Generate">
+          <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u2728.png" alt="Generate" class="noto-3d-icon">
           <span>Generate</span>
         </button>
-        <button class="nav-tab" id="tab-btn-scanner" data-tab="scanner">
-          <i class="fa-solid fa-camera"></i>
+        <button class="nav-tab" id="tab-btn-scanner" data-tab="scanner" title="Scan">
+          <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f4f8.png" alt="Scan" class="noto-3d-icon">
           <span>Scan</span>
         </button>
-        <button class="nav-tab" id="tab-btn-history" data-tab="history">
-          <i class="fa-solid fa-clock-rotate-left"></i>
+        <button class="nav-tab" id="tab-btn-history" data-tab="history" title="History">
+          <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f552.png" alt="History" class="noto-3d-icon">
           <span>History</span>
         </button>
-        <button class="nav-tab" id="tab-btn-about" data-tab="about">
-          <i class="fa-solid fa-circle-question"></i>
+        <button class="nav-tab" id="tab-btn-about" data-tab="about" title="About">
+          <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u2753.png" alt="About" class="noto-3d-icon">
           <span>About</span>
         </button>
       </nav>
 
-      <!-- SkyToggle Day/Night Mode Switch -->
-      <div class="sky-toggle-wrapper">
-        <label class="theme-switch" for="sky-toggle-checkbox" title="Toggle Day/Night mode">
-          <input
-            type="checkbox"
-            class="theme-switch__checkbox"
-            id="sky-toggle-checkbox"
-            checked
-            aria-label="Toggle day/night mode"
-          />
-          <div class="theme-switch__container">
-            <div class="theme-switch__clouds"></div>
-            <div class="theme-switch__stars-container">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </div>
-            <div class="theme-switch__circle-container">
-              <div class="theme-switch__sun-moon-container">
-                <div class="theme-switch__moon">
-                  <div class="theme-switch__spot"></div>
-                  <div class="theme-switch__spot"></div>
-                  <div class="theme-switch__spot"></div>
+      <!-- Header Controls: Auth Button & SkyToggle Day/Night Mode Switch -->
+      <div class="header-actions-wrapper">
+        <!-- User Account / Auth Trigger -->
+        <div class="auth-header-section" id="auth-header-section">
+          <!-- Rendered dynamically via js/app.js based on auth state -->
+          <button class="btn btn-outline btn-auth-trigger" id="btn-open-auth-modal">
+            <i class="fa-regular fa-user"></i>
+            <span>Sign In</span>
+          </button>
+        </div>
+
+        <!-- SkyToggle Day/Night Mode Switch -->
+        <div class="sky-toggle-wrapper">
+          <label class="theme-switch" for="sky-toggle-checkbox" title="Toggle Day/Night mode">
+            <input
+              type="checkbox"
+              class="theme-switch__checkbox"
+              id="sky-toggle-checkbox"
+              checked
+              aria-label="Toggle day/night mode"
+            />
+            <div class="theme-switch__container">
+              <div class="theme-switch__clouds"></div>
+              <div class="theme-switch__stars-container">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+              <div class="theme-switch__circle-container">
+                <div class="theme-switch__sun-moon-container">
+                  <div class="theme-switch__moon">
+                    <div class="theme-switch__spot"></div>
+                    <div class="theme-switch__spot"></div>
+                    <div class="theme-switch__spot"></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </label>
+          </label>
+        </div>
       </div>
     </div>
   </header>
@@ -109,9 +121,6 @@
     <section class="tab-content active" id="section-home">
       <div class="home-hero-container">
         <div class="home-hero-card glass-panel">
-          <div class="hero-badge">
-            <i class="fa-solid fa-bolt"></i> Instant QR Engine
-          </div>
           <h1 class="hero-title">Create, Customize & Scan <span>QR Codes</span> in Real-Time</h1>
           <p class="hero-subtitle">
             QRpop provides a lightning-fast suite to generate formatted QR codes for links, Wi-Fi, contacts, and text, or scan codes instantly via live camera & image files.
@@ -121,7 +130,7 @@
           <div class="home-cards-grid">
             <div class="home-action-card glass-panel" id="home-card-generate">
               <div class="home-card-icon">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u2728.png" alt="Generate" class="noto-3d-card-icon">
               </div>
               <h3>Generate QR Code</h3>
               <p>Create styled QR codes for websites, Wi-Fi networks, vCards, phone numbers, and emails with custom colors & shapes.</p>
@@ -133,7 +142,7 @@
 
             <div class="home-action-card glass-panel" id="home-card-scan">
               <div class="home-card-icon">
-                <i class="fa-solid fa-camera"></i>
+                <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f4f8.png" alt="Scan" class="noto-3d-card-icon">
               </div>
               <h3>Scan QR Code</h3>
               <p>Scan QR codes through your live camera feed or upload images stored on your device with instant payload parsing.</p>
@@ -147,21 +156,21 @@
           <!-- Feature Highlights -->
           <div class="home-features-row">
             <div class="feature-item">
-              <i class="fa-solid fa-shield-halved"></i>
+              <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f512.png" alt="Private" class="noto-3d-feature-icon">
               <div>
                 <h4>100% Private</h4>
                 <span>Client-side generation with zero data uploads.</span>
               </div>
             </div>
             <div class="feature-item">
-              <i class="fa-solid fa-palette"></i>
+              <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f3a8.png" alt="Customizable" class="noto-3d-feature-icon">
               <div>
                 <h4>Fully Customizable</h4>
                 <span>Custom colors, corner patterns & HD downloads.</span>
               </div>
             </div>
             <div class="feature-item">
-              <i class="fa-solid fa-mobile-screen-button"></i>
+              <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f4f1.png" alt="Mobile" class="noto-3d-feature-icon">
               <div>
                 <h4>Mobile Optimized</h4>
                 <span>Seamless touch controls and responsive flow.</span>
@@ -178,34 +187,34 @@
         <!-- Generator Form Area -->
         <div class="generator-form-card glass-panel">
           <div class="card-header">
-            <h2><i class="fa-solid fa-sliders"></i> QR Type & Data</h2>
+            <h2><img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f3a8.png" alt="Design" class="noto-3d-sm-icon"> QR Type & Data</h2>
             <span class="badge">Live Preview</span>
           </div>
 
           <!-- Type Selector Pills -->
           <div class="type-selector" id="qr-type-selector">
             <button class="type-btn active" data-type="text">
-              <i class="fa-solid fa-align-left"></i>
+              <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f4dd.png" alt="Text" class="noto-3d-type-icon">
               <span>Text</span>
             </button>
             <button class="type-btn" data-type="url">
-              <i class="fa-solid fa-link"></i>
+              <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f310.png" alt="URL" class="noto-3d-type-icon">
               <span>URL</span>
             </button>
             <button class="type-btn" data-type="wifi">
-              <i class="fa-solid fa-wifi"></i>
+              <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f4e1.png" alt="Wi-Fi" class="noto-3d-type-icon">
               <span>Wi-Fi</span>
             </button>
             <button class="type-btn" data-type="vcard">
-              <i class="fa-solid fa-address-card"></i>
+              <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f4c7.png" alt="vCard" class="noto-3d-type-icon">
               <span>vCard</span>
             </button>
             <button class="type-btn" data-type="phone">
-              <i class="fa-solid fa-phone"></i>
+              <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f4de.png" alt="Phone" class="noto-3d-type-icon">
               <span>Phone</span>
             </button>
             <button class="type-btn" data-type="email">
-              <i class="fa-solid fa-envelope"></i>
+              <img src="https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u2709.png" alt="Email" class="noto-3d-type-icon">
               <span>Email</span>
             </button>
           </div>
@@ -360,12 +369,12 @@
             <!-- Color Palette Presets -->
             <div class="preset-palettes">
               <span class="preset-label">Quick Themes:</span>
-              <button class="palette-chip active" data-fg="#13221b" data-bg="#ffffff" style="--chip-fg:#13221b; --chip-bg:#ffffff;" title="Sage Dark"></button>
-              <button class="palette-chip" data-fg="#448967" data-bg="#ffffff" style="--chip-fg:#448967; --chip-bg:#ffffff;" title="Sage Green"></button>
-              <button class="palette-chip" data-fg="#2e5a44" data-bg="#e8f5ee" style="--chip-fg:#2e5a44; --chip-bg:#e8f5ee;" title="Earthy Sage"></button>
-              <button class="palette-chip" data-fg="#0f172a" data-bg="#ffffff" style="--chip-fg:#0f172a; --chip-bg:#ffffff;" title="Classic Slate"></button>
-              <button class="palette-chip" data-fg="#d97706" data-bg="#ffffff" style="--chip-fg:#d97706; --chip-bg:#ffffff;" title="Warm Amber"></button>
-              <button class="palette-chip" data-fg="#f4fbf7" data-bg="#0a110e" style="--chip-fg:#f4fbf7; --chip-bg:#0a110e;" title="Sage Night"></button>
+              <button class="palette-chip active" data-fg="#5c72e8" data-bg="#ffffff" style="--chip-fg:#5c72e8; --chip-bg:#ffffff;" title="Royal Blue"></button>
+              <button class="palette-chip" data-fg="#1e293b" data-bg="#ffffff" style="--chip-fg:#1e293b; --chip-bg:#ffffff;" title="Classic Slate"></button>
+              <button class="palette-chip" data-fg="#4338ca" data-bg="#f0f4ff" style="--chip-fg:#4338ca; --chip-bg:#f0f4ff;" title="Indigo Blue"></button>
+              <button class="palette-chip" data-fg="#0284c7" data-bg="#ffffff" style="--chip-fg:#0284c7; --chip-bg:#ffffff;" title="Sky Blue"></button>
+              <button class="palette-chip" data-fg="#4f46e5" data-bg="#ffffff" style="--chip-fg:#4f46e5; --chip-bg:#ffffff;" title="Electric Indigo"></button>
+              <button class="palette-chip" data-fg="#f8fafc" data-bg="#0f172a" style="--chip-fg:#f8fafc; --chip-bg:#0f172a;" title="Midnight Blue"></button>
             </div>
           </div>
         </div>
@@ -609,13 +618,126 @@
     </section>
   </main>
 
+  <!-- Auth Modal Dialog (Interactive Split / Sliding Auth Switch Design) -->
+  <div class="modal-backdrop" id="auth-modal" style="display:none;" aria-hidden="true" role="dialog">
+    <div class="auth-switch-container" id="auth-switch-container">
+      <button class="modal-close-btn" id="btn-close-auth-modal" aria-label="Close dialog">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Forms Wrapper -->
+      <div class="auth-forms-container">
+        <!-- Sign In Form -->
+        <div class="auth-form-panel form-signin">
+          <form id="form-auth-login" onsubmit="return false;">
+            <h2 class="auth-heading">Sign in</h2>
+            
+            <div class="auth-input-field">
+              <i class="fa-solid fa-envelope"></i>
+              <input type="email" id="login-email" placeholder="Email" required autocomplete="email">
+            </div>
+
+            <div class="auth-input-field">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password">
+              <button type="button" class="btn-toggle-pwd" data-target="login-password" title="Toggle password visibility">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+
+            <button type="submit" class="btn-auth-action" id="btn-submit-login">
+              LOGIN
+            </button>
+          </form>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div class="auth-form-panel form-signup">
+          <form id="form-auth-signup" onsubmit="return false;">
+            <h2 class="auth-heading">Sign up</h2>
+            
+            <div class="auth-input-field">
+              <i class="fa-solid fa-user"></i>
+              <input type="text" id="signup-name" placeholder="Full Name" required autocomplete="name">
+            </div>
+
+            <div class="auth-input-field">
+              <i class="fa-solid fa-envelope"></i>
+              <input type="email" id="signup-email" placeholder="Email" required autocomplete="email">
+            </div>
+
+            <div class="auth-input-field">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="signup-password" placeholder="Password" required autocomplete="new-password">
+              <button type="button" class="btn-toggle-pwd" data-target="signup-password" title="Toggle password visibility">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+
+            <!-- Password Strength Indicator -->
+            <div class="pwd-strength-container" id="pwd-strength-box" style="display:none;">
+              <div class="pwd-strength-bar-bg" role="progressbar" aria-label="Password strength">
+                <div class="pwd-strength-bar-fill" id="pwd-strength-bar"></div>
+              </div>
+              <div class="pwd-strength-header">
+                <span id="pwd-strength-text">Enter a password</span>
+              </div>
+              <ul class="pwd-req-list">
+                <li id="req-len" class="req-item"><i class="fa-solid fa-xmark"></i> <span>At least 8 characters</span></li>
+                <li id="req-num" class="req-item"><i class="fa-solid fa-xmark"></i> <span>At least 1 number</span></li>
+                <li id="req-lower" class="req-item"><i class="fa-solid fa-xmark"></i> <span>At least 1 lowercase letter</span></li>
+                <li id="req-upper" class="req-item"><i class="fa-solid fa-xmark"></i> <span>At least 1 uppercase letter</span></li>
+              </ul>
+            </div>
+
+            <!-- Assisted Password Confirmation Visual Dot Track -->
+            <div class="assisted-pwd-wrapper" id="assisted-pwd-track">
+              <div class="pwd-dots-row" id="pwd-dots-container">
+                <span class="pwd-dots-placeholder">Type password above to preview</span>
+              </div>
+            </div>
+
+            <!-- Confirm Password Input -->
+            <div class="auth-input-field" id="confirm-pwd-wrap">
+              <i class="fa-solid fa-shield-halved"></i>
+              <input type="password" id="signup-confirm-password" placeholder="Confirm Password" required autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="btn-auth-action" id="btn-submit-signup">
+              SIGN UP
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Sliding Overlay Panels -->
+      <div class="panels-container">
+        <div class="panel panel-left">
+          <div class="panel-content">
+            <h3>New here?</h3>
+            <p>Join us today and discover a world of possibilities. Create your account in seconds!</p>
+            <button class="btn-panel-switch" id="btn-switch-to-signup">SIGN UP</button>
+          </div>
+        </div>
+        <div class="panel panel-right">
+          <div class="panel-content">
+            <h3>One of us?</h3>
+            <p>If you already have an account, just sign in. We've missed you!</p>
+            <button class="btn-panel-switch" id="btn-switch-to-signin">SIGN IN</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
   <!-- JavaScript Modules -->
-  <script src="js/history.js?v=17"></script>
-  <script src="js/generator.js?v=17"></script>
-  <script src="js/scanner.js?v=17"></script>
-  <script src="js/app.js?v=17"></script>
+  <script src="js/auth.js?v=20"></script>
+  <script src="js/history.js?v=20"></script>
+  <script src="js/generator.js?v=20"></script>
+  <script src="js/scanner.js?v=20"></script>
+  <script src="js/app.js?v=20"></script>
 </body>
 </html>
