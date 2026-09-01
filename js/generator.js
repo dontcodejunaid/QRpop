@@ -171,7 +171,7 @@ class QRGenerator {
   debouncedUpdate() {
     clearTimeout(this.debounceTimer);
     this.debounceTimer = setTimeout(() => {
-      this.updateQR(true);
+      this.updateQR(false);
     }, 180);
   }
 
@@ -232,6 +232,13 @@ class QRGenerator {
     }
   }
 
+  saveCurrentQRToHistory() {
+    const payload = this.buildPayload();
+    if (window.historyManager && payload) {
+      window.historyManager.addRecord('generated', this.currentType.toUpperCase(), payload);
+    }
+  }
+
   updateQR(saveToHist = false) {
     const payload = this.buildPayload();
     this.options.data = payload;
@@ -278,9 +285,7 @@ class QRGenerator {
       cornersDotOptions: this.options.cornersDotOptions
     });
 
-    if (window.historyManager) {
-      window.historyManager.addRecord('generated', this.currentType.toUpperCase(), payload);
-    }
+    this.saveCurrentQRToHistory();
 
     this.qrCodeInstance.download({
       name: `qrpop-${this.currentType}-${Date.now()}`,
@@ -300,6 +305,8 @@ class QRGenerator {
       const payload = this.buildPayload();
       this.options.data = payload;
       this.qrCodeInstance.update({ data: payload });
+
+      this.saveCurrentQRToHistory();
 
       const rawBlob = await this.qrCodeInstance.getRawData('png');
       if (rawBlob && navigator.clipboard && window.ClipboardItem) {
@@ -323,6 +330,8 @@ class QRGenerator {
 
   async shareQR() {
     const payload = this.buildPayload();
+    this.saveCurrentQRToHistory();
+
     if (navigator.share) {
       try {
         const rawBlob = await this.qrCodeInstance?.getRawData('png');
